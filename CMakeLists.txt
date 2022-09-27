@@ -15,3 +15,5 @@ if (PICO_SDK_VERSION_STRING VERSION_LESS "1.3.0")
 endif()
 
 pico_sdk_init()
+
+add_subdirectory(src)
