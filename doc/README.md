@@ -28,7 +28,7 @@ With this extruder we don't have ability to access to motor shaft (as we need to
 
 If you want to buy the same extruder, you may search it in Internet by '[dual gear extruder](https://www.google.com/search?q=dual+gear+extruder)' query. 
 
-The extruder brings us an access to a top of the motor shaft so now it's possible to recognize a rotation of the motor by Smart Filament Sensor.
+The extruder gives us an access to the top of a motor shaft so now it's possible to recognize a rotation of the motor by Smart Filament Sensor.
 
 Requirements
 ===
@@ -36,13 +36,33 @@ Requirements
 Hardware
 ---
 
-to be continued...
+In general, all what I bought is:
+![Hardware Requirements](img/004.HardwareRequirements.png)
+
+
+- RP2040-Zero
+- Two movement optical sensors
+- a set of wires
+- XH2,54 Connector Terminal Kit... to be honest, I only need one 3pin 'mother' connector but it's hard to find just one, so it's easy to buy a kit... maybe it will come in handy in my other projects, yeah
+
+All these stuff I bought on AliExpress. I don't sure is it makes sence to post links here as these links may be outdated and you might end up with funny '404 not found' page... but there are links nonetheless:
+- https://pl.aliexpress.com/item/32735930193.html
+- https://pl.aliexpress.com/item/1005004310502426.html
+- https://pl.aliexpress.com/item/32909050779.html
+- https://pl.aliexpress.com/item/1005004281549886.html
+
+If any of the links don't work, please let me know via a pull request, huh.
+
+In additional, it would be great if you knew a little about the soldering iron...
+
+And, of course, it would be great if you had a 3D printer as some parts of this project need to be 3D printed.
 
 Software
 ---
 
-to be continued...
+If you only want to assebly the Smart Filament Sensor, then you don't need any additional software. Download only the [latest *.uf2](../releases/)  file and follow step-by-step instruction.
 
+If you want to contribute the project (eg, if you want to improve existing source codes or to add support of STM32 or Arduino boards), please follow [Development](Development.md) instructions
 
 Step-by-step instruction
 ===
