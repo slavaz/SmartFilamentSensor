@@ -4,8 +4,8 @@ include(cmake/pico_sdk_import.cmake)
 include(cmake/version.cmake)
 
 project(SmartFilamentSensor
-    LANGUAGES C CXX ASM 
-    VERSION ${PROJECT_VERSION})
+    LANGUAGES C CXX ASM
+)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
