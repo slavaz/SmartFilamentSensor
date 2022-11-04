@@ -54,7 +54,7 @@ static void alarm_init()
 
 static void alarm_if(const bool alarm_flag)
 {
-    gpio_put(ALARM_PIN, !alarm_flag);
+    gpio_put(ALARM_PIN, alarm_flag);
 
     rgb_led__set(&rgb_led, alarm_flag ? &RGB_RED : &RGB_GREEN);
 }
@@ -84,9 +84,11 @@ static void loop()
     filament_moved = movement_sensor__moved(&filament_sensor);
     engine_moved = movement_sensor__moved(&engine_sensor);
 
+    printf("Filament: %d, engine: %d, alarm: %d\n", filament_moved, engine_moved, engine_moved && !filament_moved);
+
     alarm_if(engine_moved && !filament_moved);
 
-    sleep_ms(1);
+    sleep_ms(10);
 }
 
 /* --------------------------------------------------------------------------------------------- */

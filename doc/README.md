@@ -60,7 +60,7 @@ And, of course, it would be great if you had a 3D printer as some parts of this 
 Software
 ---
 
-If you only want to assebly the Smart Filament Sensor, then you don't need any additional software. Download only the [latest *.uf2](../releases/)  file and follow step-by-step instruction.
+If you only want to assembly the Smart Filament Sensor, then you don't need any additional software. Download only the [latest releases](../releases/)  files and follow step-by-step instruction.
 
 If you want to contribute the project (eg, if you want to improve existing source codes or to add support of STM32 or Arduino boards), please follow [Development](Development.md) instructions
 

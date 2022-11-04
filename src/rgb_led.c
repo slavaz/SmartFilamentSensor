@@ -130,7 +130,7 @@ void rgb_led__set(const rgb_led_t *rgb_led, const rgb_t *rgb)
 {
     uint32_t pixel_grb;
 
-    pixel_grb = (rgb->green << 16) | (rgb->red << 8) | (rgb->blue << 0);
+    pixel_grb = (rgb->red << 16) | (rgb->green << 8) | (rgb->blue << 0);
 
     pio_sm_put_blocking(rgb_led->pio, 0, pixel_grb << 8u);
 }
