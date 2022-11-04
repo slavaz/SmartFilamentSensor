@@ -32,25 +32,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*** file scope functions ************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-static bool movement_sensor__has_delayed_movement(const movement_sensor_t *movement_sensor)
+static bool movement_sensor__has_delayed_movement(movement_sensor_t *const movement_sensor)
 {
     absolute_time_t current_time;
-    int64_t difference_millisec;
-
+    
     current_time = get_absolute_time();
-    difference_millisec = absolute_time_diff_us(movement_sensor->last_movement_time, current_time) / 1000;
+    movement_sensor->difference_millisec = absolute_time_diff_us(movement_sensor->last_movement_time, current_time) / 1000;
 
-    return difference_millisec < movement_sensor->reading_delay;
+    return movement_sensor->difference_millisec < movement_sensor->reading_delay;
 }
 
 /* --------------------------------------------------------------------------------------------- */
 /*** public functions ****************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-void movement_sensor__init(movement_sensor_t *movement_sensor, const uint gpio, const uint32_t reading_delay)
+void movement_sensor__init(movement_sensor_t *const movement_sensor, const uint gpio)
 {
     movement_sensor->pin = gpio;
-    movement_sensor->reading_delay = reading_delay;
+    movement_sensor->reading_delay = 0;
+    movement_sensor->difference_millisec = 0;
     movement_sensor->old_value = 0;
     movement_sensor->last_movement_time = get_absolute_time();
     gpio_init(movement_sensor->pin);
@@ -59,7 +59,7 @@ void movement_sensor__init(movement_sensor_t *movement_sensor, const uint gpio, 
 
 /* --------------------------------------------------------------------------------------------- */
 
-bool movement_sensor__moved(movement_sensor_t *movement_sensor)
+bool movement_sensor__moved(movement_sensor_t *const movement_sensor)
 {
     bool current_value;
 
@@ -79,3 +79,18 @@ bool movement_sensor__moved(movement_sensor_t *movement_sensor)
 }
 
 /* --------------------------------------------------------------------------------------------- */
+
+int64_t movement_sensor__get_difference_millisec(const movement_sensor_t *const movement_sensor)
+{
+    return movement_sensor->difference_millisec;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+
+void movement_sensor__set_reading_delay(movement_sensor_t *const movement_sensor, const uint32_t reading_delay)
+{
+    movement_sensor->reading_delay = reading_delay;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+

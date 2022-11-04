@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ALARM_PIN 5
 #define RGB_LED_PIN 16
 
-#define DELAY_SENSOR_READING_MILLISEC 1000
+#define DELAY_SENSOR_READING_MILLISEC 3000
 
 /*** file scope type declarations ****************************************************************/
 
@@ -68,8 +68,11 @@ static void setup()
     rgb_led__init(&rgb_led, pio0, RGB_LED_PIN);
     rgb_led__set(&rgb_led, &RGB_BLUE);
 
-    movement_sensor__init(&filament_sensor, SENSOR_FILAMENT_PIN, DELAY_SENSOR_READING_MILLISEC);
-    movement_sensor__init(&engine_sensor, SENSOR_ENGINE_PIN, DELAY_SENSOR_READING_MILLISEC);
+    movement_sensor__init(&filament_sensor, SENSOR_FILAMENT_PIN);
+    movement_sensor__set_reading_delay(&filament_sensor, DELAY_SENSOR_READING_MILLISEC);
+
+    movement_sensor__init(&engine_sensor, SENSOR_ENGINE_PIN);
+    movement_sensor__set_reading_delay(&engine_sensor, DELAY_SENSOR_READING_MILLISEC);
 
     alarm_init();
 }
