@@ -32,65 +32,61 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*** file scope functions ************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-static bool movement_sensor__has_delayed_movement(movement_sensor_t *const movement_sensor)
+bool MovementSensor::has_delayed_movement()
 {
     absolute_time_t current_time;
-    
-    current_time = get_absolute_time();
-    movement_sensor->difference_millisec = absolute_time_diff_us(movement_sensor->last_movement_time, current_time) / 1000;
 
-    return movement_sensor->difference_millisec < movement_sensor->reading_delay;
+    current_time = get_absolute_time();
+    this->difference_millisec = absolute_time_diff_us(this->last_movement_time, current_time) / 1000;
+
+    return this->difference_millisec < this->reading_delay;
 }
 
 /* --------------------------------------------------------------------------------------------- */
 /*** public functions ****************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-void movement_sensor__init(movement_sensor_t *const movement_sensor, const uint gpio)
+void MovementSensor::init(const uint gpio)
 {
-    movement_sensor->pin = gpio;
-    movement_sensor->reading_delay = 0;
-    movement_sensor->difference_millisec = 0;
-    movement_sensor->old_value = 0;
-    movement_sensor->last_movement_time = get_absolute_time();
-    gpio_init(movement_sensor->pin);
-    gpio_set_dir(movement_sensor->pin, GPIO_IN);
+    this->pin = gpio;
+    this->reading_delay = 0;
+    this->difference_millisec = 0;
+    this->old_value = 0;
+    this->last_movement_time = get_absolute_time();
+
+    gpio_init(this->pin);
+    gpio_set_dir(this->pin, GPIO_IN);
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
-bool movement_sensor__moved(movement_sensor_t *const movement_sensor)
+bool MovementSensor::moved()
 {
     bool current_value;
 
-    current_value = gpio_get(movement_sensor->pin);
-    if (movement_sensor->old_value != current_value)
+    current_value = gpio_get(this->pin);
+    if (this->old_value != current_value)
     {
-        movement_sensor->old_value = current_value;
-        movement_sensor->last_movement_time = get_absolute_time();
+        this->old_value = current_value;
+        this->last_movement_time = get_absolute_time();
         return 1;
     }
 
-    if (movement_sensor__has_delayed_movement(movement_sensor))
-    {
-        return 1;
-    }
-    return 0;
+    return this->has_delayed_movement();
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
-int64_t movement_sensor__get_difference_millisec(const movement_sensor_t *const movement_sensor)
+int64_t MovementSensor::get_difference_millisec()
 {
-    return movement_sensor->difference_millisec;
+    return this->difference_millisec;
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
-void movement_sensor__set_reading_delay(movement_sensor_t *const movement_sensor, const uint32_t reading_delay)
+void MovementSensor::set_reading_delay(const uint32_t reading_delay)
 {
-    movement_sensor->reading_delay = reading_delay;
+    this->reading_delay = reading_delay;
 }
 
 /* --------------------------------------------------------------------------------------------- */
-

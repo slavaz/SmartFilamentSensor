@@ -34,23 +34,29 @@ typedef struct
     uint8_t blue;
 } rgb_t;
 
-typedef struct
+class RgbLed
 {
+private:
     pio_hw_t *pio;
-} rgb_led_t;
+
+private:
+    static void lowlevel_init(const PIO, const uint);
+    static void lowlevel_set_clockdiv(pio_sm_config *const);
+    static pio_sm_config lowlevel_get_config(const uint);
+
+public:
+    static const rgb_t RED;
+    static const rgb_t GREEN;
+    static const rgb_t BLUE;
+
+public:
+    void init(const pio_hw_t *, const uint);
+    void set(const rgb_t *);
+};
 
 /*** global variables defined in .c file *********************************************************/
 
-extern const rgb_t RGB_RED;
-extern const rgb_t RGB_GREEN;
-extern const rgb_t RGB_BLUE;
-
 /*** declarations of public functions ************************************************************/
-
-void rgb_led__init(rgb_led_t *, const pio_hw_t *, const uint);
-
-void rgb_led__set(const rgb_led_t *, const rgb_t *);
-
 /*** inline functions ****************************************************************************/
 
 #endif /* RGB_LED_H */

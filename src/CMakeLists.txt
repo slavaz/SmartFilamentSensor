@@ -1,7 +1,7 @@
 add_executable(SmartFilamentSensor
-        main.c
-        movement_sensor.c
-        rgb_led.c
+        main.cpp
+        movement_sensor.cpp
+        rgb_led.cpp
         )
 
 set_target_properties(

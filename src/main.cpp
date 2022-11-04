@@ -35,9 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*** file scope variables ************************************************************************/
 
-static movement_sensor_t filament_sensor;
-static movement_sensor_t engine_sensor;
-static rgb_led_t rgb_led;
+static MovementSensor filament_sensor;
+static MovementSensor engine_sensor;
+static RgbLed rgb_led;
 
 /*** global variables ****************************************************************************/
 
@@ -56,7 +56,7 @@ static void alarm_if(const bool alarm_flag)
 {
     gpio_put(ALARM_PIN, alarm_flag);
 
-    rgb_led__set(&rgb_led, alarm_flag ? &RGB_RED : &RGB_GREEN);
+    rgb_led.set(alarm_flag ? &RgbLed::RED : &RgbLed::GREEN);
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -65,14 +65,14 @@ static void setup()
 {
     stdio_init_all();
 
-    rgb_led__init(&rgb_led, pio0, RGB_LED_PIN);
-    rgb_led__set(&rgb_led, &RGB_BLUE);
+    rgb_led.init(pio0, RGB_LED_PIN);
+    rgb_led.set(&RgbLed::BLUE);
 
-    movement_sensor__init(&filament_sensor, SENSOR_FILAMENT_PIN);
-    movement_sensor__set_reading_delay(&filament_sensor, DELAY_SENSOR_READING_MILLISEC);
+    filament_sensor.init(SENSOR_FILAMENT_PIN);
+    filament_sensor.set_reading_delay(DELAY_SENSOR_READING_MILLISEC);
 
-    movement_sensor__init(&engine_sensor, SENSOR_ENGINE_PIN);
-    movement_sensor__set_reading_delay(&engine_sensor, DELAY_SENSOR_READING_MILLISEC);
+    engine_sensor.init(SENSOR_ENGINE_PIN);
+    engine_sensor.set_reading_delay(DELAY_SENSOR_READING_MILLISEC);
 
     alarm_init();
 }
@@ -84,8 +84,8 @@ static void loop()
     bool filament_moved;
     bool engine_moved;
 
-    filament_moved = movement_sensor__moved(&filament_sensor);
-    engine_moved = movement_sensor__moved(&engine_sensor);
+    filament_moved = filament_sensor.moved();
+    engine_moved = engine_sensor.moved();
 
     printf("Filament: %d, engine: %d, alarm: %d\n", filament_moved, engine_moved, engine_moved && !filament_moved);
 

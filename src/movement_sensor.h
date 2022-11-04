@@ -25,26 +25,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*** structures declarations (and typedefs of structures)*****************************************/
 
-typedef struct
+class MovementSensor
 {
+private:
     uint pin;
     uint32_t reading_delay; // milliseconds
     bool old_value;
     absolute_time_t last_movement_time;
     int64_t difference_millisec;
-} movement_sensor_t;
+
+private:
+    bool has_delayed_movement();
+
+public:
+    void init(const uint gpio);
+
+    bool moved();
+
+    int64_t get_difference_millisec();
+
+    void set_reading_delay(const uint32_t);
+
+};
 
 /*** global variables defined in .c file *********************************************************/
 
 /*** declarations of public functions ************************************************************/
-
-void movement_sensor__init(movement_sensor_t *, const uint gpio);
-
-bool movement_sensor__moved(movement_sensor_t *);
-
-int64_t movement_sensor__get_difference_millisec(const  movement_sensor_t *const);
-
-void movement_sensor__set_reading_delay(movement_sensor_t *const, const uint32_t);
 
 /*** inline functions ****************************************************************************/
 

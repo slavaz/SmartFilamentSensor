@@ -49,19 +49,19 @@ static const struct pio_program rgb_led_program = {
 
 /*** global variables ****************************************************************************/
 
-const rgb_t RGB_RED = {
+const rgb_t RgbLed::RED = {
     .red = 255,
     .green = 0,
     .blue = 0,
 };
 
-const rgb_t RGB_GREEN = {
+const rgb_t RgbLed::GREEN = {
     .red = 0,
     .green = 255,
     .blue = 0,
 };
 
-const rgb_t RGB_BLUE = {
+const rgb_t RgbLed::BLUE = {
     .red = 0,
     .green = 0,
     .blue = 255,
@@ -70,7 +70,7 @@ const rgb_t RGB_BLUE = {
 /*** file scope functions ************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-static pio_sm_config rgb_led__lowlevel_get_config(uint offset)
+pio_sm_config RgbLed::lowlevel_get_config(const uint offset)
 {
     pio_sm_config config;
 
@@ -83,7 +83,7 @@ static pio_sm_config rgb_led__lowlevel_get_config(uint offset)
 
 /* --------------------------------------------------------------------------------------------- */
 
-static void rgb_led__lowlevel_set_clockdiv(pio_sm_config *config)
+void RgbLed::lowlevel_set_clockdiv(pio_sm_config *const config)
 {
     float clockdiv;
 
@@ -94,7 +94,7 @@ static void rgb_led__lowlevel_set_clockdiv(pio_sm_config *config)
 
 /* --------------------------------------------------------------------------------------------- */
 
-static void rgb_led__lowlevel_init(PIO pio, uint pin)
+void RgbLed::lowlevel_init(const PIO pio, const uint pin)
 {
     uint offset = pio_add_program(pio, &rgb_led_program);
     pio_sm_config config;
@@ -102,12 +102,12 @@ static void rgb_led__lowlevel_init(PIO pio, uint pin)
     pio_gpio_init(pio, pin);
     pio_sm_set_consecutive_pindirs(pio, RGB_LED__PIO_SM, pin, 1, true);
 
-    config = rgb_led__lowlevel_get_config(offset);
+    config = RgbLed::lowlevel_get_config(offset);
     sm_config_set_sideset_pins(&config, pin);
     sm_config_set_out_shift(&config, false, true, RGB_LED__PIO_SHIFT);
     sm_config_set_fifo_join(&config, PIO_FIFO_JOIN_TX);
 
-    rgb_led__lowlevel_set_clockdiv(&config);
+    RgbLed::lowlevel_set_clockdiv(&config);
 
     pio_sm_init(pio, RGB_LED__PIO_SM, offset, &config);
     pio_sm_set_enabled(pio, RGB_LED__PIO_SM, true);
@@ -117,22 +117,22 @@ static void rgb_led__lowlevel_init(PIO pio, uint pin)
 /*** public functions ****************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-void rgb_led__init(rgb_led_t *rgb_led, const pio_hw_t *pio, const uint pin)
+void RgbLed::init(const pio_hw_t *pio, const uint pin)
 {
-    rgb_led->pio = (pio_hw_t *)pio;
+    this->pio = (pio_hw_t *)pio;
 
-    rgb_led__lowlevel_init(rgb_led->pio, pin);
+    RgbLed::lowlevel_init(this->pio, pin);
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
-void rgb_led__set(const rgb_led_t *rgb_led, const rgb_t *rgb)
+void RgbLed::set(const rgb_t *rgb)
 {
     uint32_t pixel_grb;
 
     pixel_grb = (rgb->red << 16) | (rgb->green << 8) | (rgb->blue << 0);
 
-    pio_sm_put_blocking(rgb_led->pio, 0, pixel_grb << 8u);
+    pio_sm_put_blocking(this->pio, 0, pixel_grb << 8u);
 }
 
 /* --------------------------------------------------------------------------------------------- */
