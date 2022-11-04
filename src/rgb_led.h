@@ -16,8 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef RGB_LED_H
-#define RGB_LED_H
+#ifndef RGB_LED__H
+#define RGB_LED__H
 
 #include "hardware/pio.h"
 
@@ -59,4 +59,4 @@ public:
 /*** declarations of public functions ************************************************************/
 /*** inline functions ****************************************************************************/
 
-#endif /* RGB_LED_H */
+#endif /* RGB_LED__H */

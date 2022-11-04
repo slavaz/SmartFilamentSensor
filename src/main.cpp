@@ -16,9 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
 #include "pico/stdlib.h"
 
+#include "alarm_output.h"
+#include "event_controller.h"
 #include "movement_sensor.h"
 #include "rgb_led.h"
 
@@ -38,27 +39,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 static MovementSensor filament_sensor;
 static MovementSensor engine_sensor;
 static RgbLed rgb_led;
+static AlarmOutput alarm;
+
+static EventController event_controller;
 
 /*** global variables ****************************************************************************/
 
 /*** file scope functions ************************************************************************/
-/* --------------------------------------------------------------------------------------------- */
-
-static void alarm_init()
-{
-    gpio_init(ALARM_PIN);
-    gpio_set_dir(ALARM_PIN, GPIO_OUT);
-}
-
-/* --------------------------------------------------------------------------------------------- */
-
-static void alarm_if(const bool alarm_flag)
-{
-    gpio_put(ALARM_PIN, alarm_flag);
-
-    rgb_led.set(alarm_flag ? &RgbLed::RED : &RgbLed::GREEN);
-}
-
 /* --------------------------------------------------------------------------------------------- */
 
 static void setup()
@@ -74,23 +61,16 @@ static void setup()
     engine_sensor.init(SENSOR_ENGINE_PIN);
     engine_sensor.set_reading_delay(DELAY_SENSOR_READING_MILLISEC);
 
-    alarm_init();
+    alarm.init(ALARM_PIN);
+
+    event_controller.init(&rgb_led, &alarm, &filament_sensor, &engine_sensor);
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
 static void loop()
 {
-    bool filament_moved;
-    bool engine_moved;
-
-    filament_moved = filament_sensor.moved();
-    engine_moved = engine_sensor.moved();
-
-    printf("Filament: %d, engine: %d, alarm: %d\n", filament_moved, engine_moved, engine_moved && !filament_moved);
-
-    alarm_if(engine_moved && !filament_moved);
-
+    event_controller.heartbeat();
     sleep_ms(10);
 }
 

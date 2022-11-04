@@ -16,11 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef MOVEMENT_SENSOR__H
-#define MOVEMENT_SENSOR__H
+#ifndef EVENT_CONTROLLER__H
+#define EVENT_CONTROLLER__H
 
-#include "pico/stdlib.h"
-#include <pico/time.h>
+#include "alarm_output.h"
+#include "movement_sensor.h"
+#include "rgb_led.h"
 
 /*** typedefs(not structures) and defined constants **********************************************/
 
@@ -28,26 +29,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*** structures declarations (and typedefs of structures)*****************************************/
 
-class MovementSensor
+class EventController
 {
 private:
-    uint pin;
-    uint32_t reading_delay; // milliseconds
-    bool old_value;
-    absolute_time_t last_movement_time;
-    int64_t difference_millisec;
-
-private:
-    bool has_delayed_movement();
+    RgbLed *rgb_led;
+    AlarmOutput *alarm;
+    MovementSensor *filament_sensor;
+    MovementSensor *engine_sensor;
 
 public:
-    void init(const uint gpio);
-
-    bool moved();
-
-    int64_t get_difference_millisec();
-
-    void set_reading_delay(const uint32_t);
+    void init(RgbLed *const rgb_led, AlarmOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor);
+    void heartbeat();
 };
 
 /*** global variables defined in .c file *********************************************************/
@@ -56,4 +48,4 @@ public:
 
 /*** inline functions ****************************************************************************/
 
-#endif /* MOVEMENT_SENSOR__H */
+#endif /* EVENT_CONTROLLER__H */
