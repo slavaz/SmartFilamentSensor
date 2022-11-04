@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*** file scope macro definitions ****************************************************************/
 
+#define FILAMENT_SENSOR_INITIAL_LATENCY_MILLISEC 3000
+#define ENGINE_SENSOR_INITIAL_LATENCY_MILLISEC 1000
+
 /*** file scope type declarations ****************************************************************/
 
 /*** file scope variables ************************************************************************/
@@ -41,6 +44,9 @@ void EventController::init(RgbLed *const rgb_led, AlarmOutput *const alarm, Move
     this->rgb_led = rgb_led;
     this->engine_sensor = engine_sensor;
     this->filament_sensor = filament_sensor;
+
+    this->filament_sensor->set_reading_delay(FILAMENT_SENSOR_INITIAL_LATENCY_MILLISEC);
+    this->engine_sensor->set_reading_delay(ENGINE_SENSOR_INITIAL_LATENCY_MILLISEC);
 }
 
 /* --------------------------------------------------------------------------------------------- */

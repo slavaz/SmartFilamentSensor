@@ -30,8 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ALARM_PIN 5
 #define RGB_LED_PIN 16
 
-#define DELAY_SENSOR_READING_MILLISEC 3000
-
 /*** file scope type declarations ****************************************************************/
 
 /*** file scope variables ************************************************************************/
@@ -56,10 +54,7 @@ static void setup()
     rgb_led.set(&RgbLed::BLUE);
 
     filament_sensor.init(SENSOR_FILAMENT_PIN);
-    filament_sensor.set_reading_delay(DELAY_SENSOR_READING_MILLISEC);
-
     engine_sensor.init(SENSOR_ENGINE_PIN);
-    engine_sensor.set_reading_delay(DELAY_SENSOR_READING_MILLISEC);
 
     alarm.init(ALARM_PIN);
 
