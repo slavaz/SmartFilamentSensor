@@ -48,6 +48,7 @@ public:
     int64_t get_difference_millisec();
 
     void set_reading_delay(const uint32_t);
+    uint32_t get_reading_delay();
 };
 
 /*** global variables defined in .c file *********************************************************/

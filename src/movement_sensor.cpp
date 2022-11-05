@@ -89,3 +89,10 @@ void MovementSensor::set_reading_delay(const uint32_t reading_delay)
 }
 
 /* --------------------------------------------------------------------------------------------- */
+
+uint32_t MovementSensor::get_reading_delay()
+{
+    return this->reading_delay;
+}
+
+/* --------------------------------------------------------------------------------------------- */

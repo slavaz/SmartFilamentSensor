@@ -27,6 +27,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*** enums ***************************************************************************************/
 
+typedef enum
+{
+    EVENT_NONE,
+    EVENT_ONLY_FILAMENT,
+    EVENT_ONLY_ENGINE,
+    EVENT_FILAMENT_AND_ENGINE,
+    EVENT_RETRACTION,
+} event_state_t;
+
 /*** structures declarations (and typedefs of structures)*****************************************/
 
 class EventController
@@ -36,6 +45,23 @@ private:
     AlarmOutput *alarm;
     MovementSensor *filament_sensor;
     MovementSensor *engine_sensor;
+
+    uint filament_average_interval;
+    uint filament_events_count;
+
+    uint engine_average_interval;
+    uint engine_events_count;
+
+    event_state_t state;
+    uint count_failures;
+
+private:
+    event_state_t get_current_state();
+    uint calculate_average_interval(const uint, const uint, const uint);
+    void set_average_intervals();
+    void show_decorations(const event_state_t);
+    bool time_to_adjustment();
+    static void adjust_sensor_latency(const char *const, MovementSensor *const, cost uint);
 
 public:
     void init(RgbLed *const rgb_led, AlarmOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor);

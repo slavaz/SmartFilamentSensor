@@ -48,6 +48,7 @@ public:
     static const rgb_t RED;
     static const rgb_t GREEN;
     static const rgb_t BLUE;
+    static const rgb_t YELLOW;
 
 public:
     void init(const pio_hw_t *, const uint);
