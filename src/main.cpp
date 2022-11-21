@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "pico/stdlib.h"
 
-#include "alarm_output.h"
+#include "pin_output.h"
 #include "event_controller.h"
 #include "movement_sensor.h"
 #include "rgb_led.h"
@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 static MovementSensor filament_sensor;
 static MovementSensor engine_sensor;
 static RgbLed rgb_led;
-static AlarmOutput alarm;
+static PinOutput alarm;
 
 static EventController event_controller;
 

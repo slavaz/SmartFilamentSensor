@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <hardware/gpio.h>
 
-#include "alarm_output.h"
+#include "pin_output.h"
 
 /*** file scope macro definitions ****************************************************************/
 
@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*** public functions ****************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-void AlarmOutput::init(const uint pin)
+void PinOutput::init(const uint pin)
 {
     this->pin = pin;
     gpio_init(this->pin);
@@ -43,7 +43,7 @@ void AlarmOutput::init(const uint pin)
 
 /* --------------------------------------------------------------------------------------------- */
 
-void AlarmOutput::set(const bool alarm_flag)
+void PinOutput::set(const bool alarm_flag)
 {
     gpio_put(this->pin, alarm_flag);
 }

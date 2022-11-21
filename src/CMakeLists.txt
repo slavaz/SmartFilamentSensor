@@ -1,6 +1,6 @@
 add_executable(SmartFilamentSensor
         main.cpp
-        alarm_output.cpp
+        pin_output.cpp
         event_controller.cpp
         sensor_management.cpp
         movement_sensor.cpp

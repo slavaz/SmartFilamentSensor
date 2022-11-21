@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef EVENT_CONTROLLER__H
 #define EVENT_CONTROLLER__H
 
-#include "alarm_output.h"
+#include "pin_output.h"
 #include "sensor_management.h"
 #include "movement_sensor.h"
 #include "rgb_led.h"
@@ -43,7 +43,7 @@ class EventController
 {
 private:
     RgbLed *rgb_led;
-    AlarmOutput *alarm;
+    PinOutput *alarm;
     SensorManagement filament_sensor;
     SensorManagement engine_sensor;
 
@@ -56,7 +56,7 @@ private:
     void show_decorations(const event_state_t);
 
 public:
-    void init(RgbLed *const rgb_led, AlarmOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor);
+    void init(RgbLed *const rgb_led, PinOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor);
     void heartbeat();
 };
 

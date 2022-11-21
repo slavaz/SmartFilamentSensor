@@ -104,7 +104,7 @@ void EventController::show_decorations(const event_state_t state)
 /*** public functions ****************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-void EventController::init(RgbLed *const rgb_led, AlarmOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor)
+void EventController::init(RgbLed *const rgb_led, PinOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor)
 {
     this->alarm = alarm;
     this->rgb_led = rgb_led;

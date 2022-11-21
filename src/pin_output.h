@@ -16,8 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ALARM_OUTPUT__H
-#define ALARM_OUTPUT__H
+#ifndef PIN_OUTPUT__H
+#define PIN_OUTPUT__H
 
 #include "pico/stdlib.h"
 
@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*** structures declarations (and typedefs of structures)*****************************************/
 
-class AlarmOutput
+class PinOutput
 {
 private:
     uint pin;
@@ -43,4 +43,4 @@ public:
 
 /*** inline functions ****************************************************************************/
 
-#endif /* EVENT_CONTROLLER_H */
+#endif /* PIN_OUTPUT__H */
