@@ -31,16 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*** file scope functions ************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-bool MovementSensor::has_delayed_movement()
-{
-    absolute_time_t current_time;
-
-    current_time = get_absolute_time();
-    this->difference_millisec = absolute_time_diff_us(this->last_movement_time, current_time) / 1000;
-
-    return this->difference_millisec < this->reading_delay;
-}
-
 /* --------------------------------------------------------------------------------------------- */
 /*** public functions ****************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
@@ -48,10 +38,7 @@ bool MovementSensor::has_delayed_movement()
 void MovementSensor::init(const uint gpio)
 {
     this->pin = gpio;
-    this->reading_delay = 0;
-    this->difference_millisec = 0;
     this->old_value = 0;
-    this->last_movement_time = get_absolute_time();
 
     gpio_init(this->pin);
     gpio_set_dir(this->pin, GPIO_IN);
@@ -59,7 +46,7 @@ void MovementSensor::init(const uint gpio)
 
 /* --------------------------------------------------------------------------------------------- */
 
-bool MovementSensor::moved()
+bool MovementSensor::has_movement()
 {
     bool current_value;
 
@@ -67,32 +54,10 @@ bool MovementSensor::moved()
     if (this->old_value != current_value)
     {
         this->old_value = current_value;
-        this->last_movement_time = get_absolute_time();
         return 1;
     }
 
-    return this->has_delayed_movement();
-}
-
-/* --------------------------------------------------------------------------------------------- */
-
-int64_t MovementSensor::get_difference_millisec()
-{
-    return this->difference_millisec;
-}
-
-/* --------------------------------------------------------------------------------------------- */
-
-void MovementSensor::set_reading_delay(const uint32_t reading_delay)
-{
-    this->reading_delay = reading_delay;
-}
-
-/* --------------------------------------------------------------------------------------------- */
-
-uint32_t MovementSensor::get_reading_delay()
-{
-    return this->reading_delay;
+    return 0;
 }
 
 /* --------------------------------------------------------------------------------------------- */

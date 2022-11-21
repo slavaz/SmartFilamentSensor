@@ -16,48 +16,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef EVENT_CONTROLLER__H
-#define EVENT_CONTROLLER__H
+#ifndef SENSOR_MANAGEMENT__H
+#define SENSOR_MANAGEMENT__H
 
-#include "alarm_output.h"
-#include "sensor_management.h"
+#include "pico/stdlib.h"
+#include <pico/time.h>
 #include "movement_sensor.h"
-#include "rgb_led.h"
 
 /*** typedefs(not structures) and defined constants **********************************************/
 
 /*** enums ***************************************************************************************/
 
-typedef enum
-{
-    EVENT_NONE,
-    EVENT_ONLY_FILAMENT,
-    EVENT_ONLY_ENGINE,
-    EVENT_FILAMENT_AND_ENGINE,
-    EVENT_RETRACTION,
-} event_state_t;
-
 /*** structures declarations (and typedefs of structures)*****************************************/
 
-class EventController
+class SensorManagement
 {
 private:
-    RgbLed *rgb_led;
-    AlarmOutput *alarm;
-    SensorManagement filament_sensor;
-    SensorManagement engine_sensor;
-
-    event_state_t state;
-    uint count_failures;
+    MovementSensor *sensor;
+    bool has_sensor_movement;
+    uint32_t reading_delay; // milliseconds
+    absolute_time_t last_movement_time;
+    uint difference_millisec;
+    uint previous_difference_millisec;
+    int64_t total_events_count;
+    uint average_interval_between_events;
 
 private:
-    event_state_t get_current_state();
-    void set_average_intervals();
-    void show_decorations(const event_state_t);
+    bool has_delayed_movement();
 
 public:
-    void init(RgbLed *const rgb_led, AlarmOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor);
+    void init(MovementSensor *const);
     void heartbeat();
+    void calculate_average_interval();
+
+    bool moved();
+
+    bool has_fast_movement();
+
+    void set_reading_delay(const uint32_t);
+    uint32_t get_reading_delay();
 };
 
 /*** global variables defined in .c file *********************************************************/
@@ -66,4 +63,4 @@ public:
 
 /*** inline functions ****************************************************************************/
 
-#endif /* EVENT_CONTROLLER__H */
+#endif /* SENSOR_MANAGEMENT__H */

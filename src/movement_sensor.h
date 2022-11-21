@@ -32,10 +32,7 @@ class MovementSensor
 {
 private:
     uint pin;
-    uint32_t reading_delay; // milliseconds
     bool old_value;
-    absolute_time_t last_movement_time;
-    int64_t difference_millisec;
 
 private:
     bool has_delayed_movement();
@@ -43,12 +40,7 @@ private:
 public:
     void init(const uint gpio);
 
-    bool moved();
-
-    int64_t get_difference_millisec();
-
-    void set_reading_delay(const uint32_t);
-    uint32_t get_reading_delay();
+    bool has_movement();
 };
 
 /*** global variables defined in .c file *********************************************************/
