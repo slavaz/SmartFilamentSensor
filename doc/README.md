@@ -20,6 +20,7 @@ Prerequirements
 ===
 
 The Smart Filament Sensor has two movement sensors: one for a filament, and second one - for a motor in extruder. Stock extruder looks like:
+
 ![Stock bowden extruder](img/002.StockBowdenExtruder.png)
 
 With this extruder we don't have ability to access to motor shaft (as we need to recognize rotation) - the motor shaft is placed inside fully closed box. So in my case, I've replaced the stock extruder by this:
