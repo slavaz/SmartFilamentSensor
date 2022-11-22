@@ -4,6 +4,7 @@ add_executable(SmartFilamentSensor
         event_controller.cpp
         sensor_management.cpp
         movement_sensor.cpp
+        timer.cpp
         rgb_led.cpp
         )
 

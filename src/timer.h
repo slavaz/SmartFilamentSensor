@@ -16,12 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SENSOR_MANAGEMENT__H
-#define SENSOR_MANAGEMENT__H
+#ifndef TIMER__H
+#define TIMER__H
 
 #include "pico/stdlib.h"
 #include <pico/time.h>
-#include "movement_sensor.h"
 
 /*** typedefs(not structures) and defined constants **********************************************/
 
@@ -29,34 +28,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*** structures declarations (and typedefs of structures)*****************************************/
 
-class SensorManagement
+class Timer
 {
 private:
-    MovementSensor *sensor;
-    bool has_sensor_movement;
-    uint32_t reading_delay; // milliseconds
-    absolute_time_t last_movement_time;
-    uint difference_millisec;
-    uint previous_difference_millisec;
-    int64_t total_events_count;
-    uint average_interval_between_events;
+    uint time_to_wait_milisec;
 
-private:
-    bool has_delayed_movement();
+    absolute_time_t start_time;
+    absolute_time_t current_time;
 
 public:
-    void init(MovementSensor *const);
+    void init(const uint);
     void heartbeat();
-    void calculate_average_interval();
-
-    void reset();
-
-    bool moved();
-
-    bool has_fast_movement();
-
-    void set_reading_delay(const uint32_t);
-    uint32_t get_reading_delay();
+    bool has_ended();
 };
 
 /*** global variables defined in .c file *********************************************************/
@@ -65,4 +48,4 @@ public:
 
 /*** inline functions ****************************************************************************/
 
-#endif /* SENSOR_MANAGEMENT__H */
+#endif /* TIMER__H */

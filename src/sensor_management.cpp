@@ -16,8 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <hardware/gpio.h>
-
 #include "sensor_management.h"
 
 /*** file scope macro definitions ****************************************************************/
@@ -54,9 +52,17 @@ void SensorManagement::init(MovementSensor *const sensor)
     this->total_events_count = 0;
     this->average_interval_between_events = 0;
     this->has_sensor_movement = 0;
-    this->difference_millisec = 0;
-    this->previous_difference_millisec = 0;
+
+    this->reset();
+}
+
+/* --------------------------------------------------------------------------------------------- */
+
+void SensorManagement::reset()
+{
     this->last_movement_time = get_absolute_time();
+    this->previous_difference_millisec = 0;
+    this->difference_millisec = 0;
 }
 
 /* --------------------------------------------------------------------------------------------- */

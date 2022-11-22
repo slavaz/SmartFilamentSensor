@@ -24,8 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define FILAMENT_SENSOR_INITIAL_LATENCY_MILLISEC 3000
 #define ENGINE_SENSOR_INITIAL_LATENCY_MILLISEC 1000
-
-#define ADJUSTMENT_TIME_MULTIPLIER 4
+#define ERROR_WAIT_MILLISEC 5000 // wait 5 seconds in 'error' state
+#define WAIT_BEFORE_MOVING_MILLISEC 500
 
 /*** file scope type declarations ****************************************************************/
 
@@ -36,9 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*** file scope functions ************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-event_state_t EventController::get_current_state()
+event_movement_state_t EventController::get_current_movement_state()
 {
-    event_state_t state;
+    event_movement_state_t movement_state;
 
     bool filament_moved;
     bool engine_moved;
@@ -46,61 +46,115 @@ event_state_t EventController::get_current_state()
     filament_moved = this->filament_sensor.moved();
     engine_moved = this->engine_sensor.moved();
 
-    state = (filament_moved && !engine_moved) ? EVENT_ONLY_FILAMENT : (!filament_moved && engine_moved) ? EVENT_ONLY_ENGINE
-                                                                  : (filament_moved && engine_moved)    ? EVENT_FILAMENT_AND_ENGINE
-                                                                                                        : EVENT_NONE;
+    movement_state = (filament_moved && !engine_moved) ? EVENT_MOVEMENT_ONLY_FILAMENT : (!filament_moved && engine_moved) ? EVENT_MOVEMENT_ONLY_ENGINE
+                                                                                    : (filament_moved && engine_moved)    ? EVENT_MOVEMENT_FILAMENT_AND_ENGINE
+                                                                                                                          : EVENT_MOVEMENT_STOP;
 
-    if ((EVENT_FILAMENT_AND_ENGINE == this->state || EVENT_RETRACTION == this->state) && EVENT_FILAMENT_AND_ENGINE == state)
-    {
-        // an attempt to recognize a retraction
-        if (this->engine_sensor.has_fast_movement())
-        {
-            state = EVENT_RETRACTION;
-        }
-    }
-
-    return state;
+    return movement_state;
 }
 /* --------------------------------------------------------------------------------------------- */
 
-void EventController::set_average_intervals()
+void EventController::show_decorations()
 {
-    this->filament_sensor.calculate_average_interval();
-    this->engine_sensor.calculate_average_interval();
-}
-
-/* ----------------------------------s----------------------------------------------------------- */
-
-void EventController::show_decorations(const event_state_t state)
-{
-    if (state == this->state)
+    switch (this->state)
     {
-        return;
-    }
-
-    switch (state)
-    {
-    case EVENT_ONLY_ENGINE:
+    case EVENT_WAITING_IN_ERROR:
         this->rgb_led->set(&RgbLed::RED);
-        puts("[ERROR] Looks like a filament is ended or stucks!");
         break;
 
-    case EVENT_ONLY_FILAMENT:
+    case EVENT_MANUAL_FEED:
         this->rgb_led->set(&RgbLed::YELLOW);
-        puts("[WARNING] Looks like a filement is manually loaded or unloaded. Isn't it?");
         break;
 
     case EVENT_RETRACTION:
         this->rgb_led->set(&RgbLed::BLUE);
-        puts("[DEBUG] Retraction");
         break;
-
     default:
         this->rgb_led->set(&RgbLed::GREEN);
     }
 }
-
 /* ----------------------------------s----------------------------------------------------------- */
+
+event_state_t EventController::handle_event_none(const event_movement_state_t movement_state)
+{
+    if (EVENT_MOVEMENT_STOP == movement_state)
+    {
+        return EVENT_NONE;
+    }
+    this->timer.init(WAIT_BEFORE_MOVING_MILLISEC);
+
+    return EVENT_WAIT_BEFORE_MOVING;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+
+event_state_t EventController::handle_event_wait_before_moving(const event_movement_state_t movement_state)
+{
+    return this->timer.has_ended() ? EVENT_MOVING : EVENT_WAIT_BEFORE_MOVING;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+
+event_state_t EventController::handle_event_moving(const event_movement_state_t movement_state)
+{
+
+    switch (movement_state)
+    {
+    case EVENT_MOVEMENT_ONLY_ENGINE:
+        this->alarm->set(true);
+        this->timer.init(ERROR_WAIT_MILLISEC);
+        return EVENT_WAITING_IN_ERROR;
+
+    case EVENT_MOVEMENT_ONLY_FILAMENT:
+        return EVENT_MANUAL_FEED;
+
+    case EVENT_MOVEMENT_FILAMENT_AND_ENGINE:
+        if (this->engine_sensor.has_fast_movement())
+        {
+            return EVENT_RETRACTION;
+        }
+        this->filament_sensor.calculate_average_interval();
+        this->engine_sensor.calculate_average_interval();
+        return EVENT_MOVING;
+    }
+
+    return EVENT_NONE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+
+event_state_t EventController::handle_event_retraction(const event_movement_state_t movement_state)
+{
+    if (EVENT_MOVEMENT_FILAMENT_AND_ENGINE == movement_state)
+    {
+        return this->engine_sensor.has_fast_movement() ? EVENT_RETRACTION : EVENT_MOVING;
+    }
+    return EVENT_NONE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+
+event_state_t EventController::handle_event_manual_feed(const event_movement_state_t movement_state)
+{
+    return EVENT_MOVEMENT_ONLY_FILAMENT == movement_state ? EVENT_MANUAL_FEED : EVENT_NONE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+event_state_t EventController::handle_event_waiting_in_error(const event_movement_state_t movement_state)
+{
+    if (!this->timer.has_ended())
+    {
+        return EVENT_WAITING_IN_ERROR;
+    }
+
+    this->filament_sensor.reset();
+    this->engine_sensor.reset();
+    this->alarm->set(false);
+
+    return EVENT_NONE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
 /*** public functions ****************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
@@ -111,8 +165,8 @@ void EventController::init(RgbLed *const rgb_led, PinOutput *const alarm, Moveme
     this->engine_sensor.init(engine_sensor);
     this->filament_sensor.init(filament_sensor);
     this->state = EVENT_NONE;
-    this->count_failures = 0;
 
+    this->alarm->set(false);
     this->filament_sensor.set_reading_delay(FILAMENT_SENSOR_INITIAL_LATENCY_MILLISEC);
     this->engine_sensor.set_reading_delay(ENGINE_SENSOR_INITIAL_LATENCY_MILLISEC);
 }
@@ -121,31 +175,37 @@ void EventController::init(RgbLed *const rgb_led, PinOutput *const alarm, Moveme
 
 void EventController::heartbeat()
 {
-    event_state_t current_state;
+    event_movement_state_t movement_state;
 
+    this->timer.heartbeat();
     this->engine_sensor.heartbeat();
     this->filament_sensor.heartbeat();
 
-    current_state = this->get_current_state();
+    movement_state = this->get_current_movement_state();
 
-    this->show_decorations(current_state);
-
-    switch (current_state)
+    switch (this->state)
     {
-    case EVENT_ONLY_ENGINE:
-        if (++this->count_failures >= ADJUSTMENT_TIME_MULTIPLIER - 1)
-        {
-            this->alarm->set(true);
-        }
+    case EVENT_NONE:
+        this->state = this->handle_event_none(movement_state);
         break;
-    case EVENT_FILAMENT_AND_ENGINE:
-        this->set_average_intervals();
-
+    case EVENT_WAIT_BEFORE_MOVING:
+        this->state = this->handle_event_wait_before_moving(movement_state);
+        break;
+    case EVENT_MOVING:
+        this->state = this->handle_event_moving(movement_state);
+        break;
+    case EVENT_RETRACTION:
+        this->state = this->handle_event_retraction(movement_state);
+        break;
+    case EVENT_MANUAL_FEED:
+        this->state = this->handle_event_manual_feed(movement_state);
+        break;
+    case EVENT_WAITING_IN_ERROR:
+        this->state = this->handle_event_waiting_in_error(movement_state);
+        break;
     default:
-        this->alarm->set(false);
-        this->count_failures = 0;
+        this->state = EVENT_NONE;
     }
-
-    this->state = current_state;
+    this->show_decorations();
 }
 /* --------------------------------------------------------------------------------------------- */

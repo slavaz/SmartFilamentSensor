@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "pin_output.h"
 #include "sensor_management.h"
+#include "timer.h"
 #include "movement_sensor.h"
 #include "rgb_led.h"
 
@@ -30,11 +31,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 typedef enum
 {
+    EVENT_MOVEMENT_STOP,
+    EVENT_MOVEMENT_ONLY_FILAMENT,
+    EVENT_MOVEMENT_ONLY_ENGINE,
+    EVENT_MOVEMENT_FILAMENT_AND_ENGINE,
+} event_movement_state_t;
+
+typedef enum
+{
     EVENT_NONE,
-    EVENT_ONLY_FILAMENT,
-    EVENT_ONLY_ENGINE,
-    EVENT_FILAMENT_AND_ENGINE,
+    EVENT_WAIT_BEFORE_MOVING,
+    EVENT_MOVING,
     EVENT_RETRACTION,
+    EVENT_MANUAL_FEED,
+    EVENT_WAITING_IN_ERROR,
 } event_state_t;
 
 /*** structures declarations (and typedefs of structures)*****************************************/
@@ -46,17 +56,24 @@ private:
     PinOutput *alarm;
     SensorManagement filament_sensor;
     SensorManagement engine_sensor;
+    Timer timer;
 
     event_state_t state;
-    uint count_failures;
 
 private:
-    event_state_t get_current_state();
-    void set_average_intervals();
-    void show_decorations(const event_state_t);
+    event_movement_state_t get_current_movement_state();
+    void show_decorations();
+
+    event_state_t handle_event_none(const event_movement_state_t);
+    event_state_t handle_event_wait_before_moving(const event_movement_state_t);
+    event_state_t handle_event_moving(const event_movement_state_t);
+    event_state_t handle_event_retraction(const event_movement_state_t);
+    event_state_t handle_event_manual_feed(const event_movement_state_t);
+    event_state_t handle_event_waiting_in_error(const event_movement_state_t);
 
 public:
-    void init(RgbLed *const rgb_led, PinOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor);
+    void
+    init(RgbLed *const rgb_led, PinOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor);
     void heartbeat();
 };
 

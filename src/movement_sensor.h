@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MOVEMENT_SENSOR__H
 
 #include "pico/stdlib.h"
-#include <pico/time.h>
 
 /*** typedefs(not structures) and defined constants **********************************************/
 
