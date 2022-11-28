@@ -42,6 +42,7 @@ void MovementSensor::init(const uint gpio)
 
     gpio_init(this->pin);
     gpio_set_dir(this->pin, GPIO_IN);
+    gpio_pull_down(this->pin);
 }
 
 /* --------------------------------------------------------------------------------------------- */

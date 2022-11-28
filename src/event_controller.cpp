@@ -22,10 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*** file scope macro definitions ****************************************************************/
 
-#define FILAMENT_SENSOR_INITIAL_LATENCY_MILLISEC 3000
+#define FILAMENT_SENSOR_INITIAL_LATENCY_MILLISEC 5000
 #define ENGINE_SENSOR_INITIAL_LATENCY_MILLISEC 1000
-#define ERROR_WAIT_MILLISEC 5000 // wait 5 seconds in 'error' state
-#define WAIT_BEFORE_MOVING_MILLISEC 500
+#define ERROR_TOLERANCE_MILLISEC 500
+#define ERROR_WAIT_MILLISEC 4000
+#define WAIT_BEFORE_MOVING_MILLISEC 300
 
 /*** file scope type declarations ****************************************************************/
 
@@ -65,7 +66,6 @@ void EventController::show_decorations()
     case EVENT_MANUAL_FEED:
         this->rgb_led->set(&RgbLed::YELLOW);
         break;
-
     case EVENT_RETRACTION:
         this->rgb_led->set(&RgbLed::BLUE);
         break;
@@ -81,6 +81,7 @@ event_state_t EventController::handle_event_none(const event_movement_state_t mo
     {
         return EVENT_NONE;
     }
+    puts("Started EVENT_WAIT_BEFORE_MOVING after EVENT_NONE");
     this->timer.init(WAIT_BEFORE_MOVING_MILLISEC);
 
     return EVENT_WAIT_BEFORE_MOVING;
@@ -90,7 +91,14 @@ event_state_t EventController::handle_event_none(const event_movement_state_t mo
 
 event_state_t EventController::handle_event_wait_before_moving(const event_movement_state_t movement_state)
 {
-    return this->timer.has_ended() ? EVENT_MOVING : EVENT_WAIT_BEFORE_MOVING;
+    if (!this->timer.has_ended())
+    {
+        return EVENT_WAIT_BEFORE_MOVING;
+    }
+    this->filament_sensor.reset();
+    this->engine_sensor.reset();
+    puts("Started EVENT_MOVING after EVENT_WAIT_BEFORE_MOVING");
+    return EVENT_MOVING;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -101,23 +109,25 @@ event_state_t EventController::handle_event_moving(const event_movement_state_t 
     switch (movement_state)
     {
     case EVENT_MOVEMENT_ONLY_ENGINE:
-        this->alarm->set(true);
-        this->timer.init(ERROR_WAIT_MILLISEC);
-        return EVENT_WAITING_IN_ERROR;
+        this->timer.init(ERROR_TOLERANCE_MILLISEC);
+        puts("!!! Started EVENT_SUSPECTION_ON_ERROR after EVENT_MOVING(EVENT_MOVEMENT_ONLY_ENGINE)");
+        return EVENT_SUSPECTION_ON_ERROR;
 
     case EVENT_MOVEMENT_ONLY_FILAMENT:
+        puts("Started EVENT_MANUAL_FEED after EVENT_MOVING");
         return EVENT_MANUAL_FEED;
 
     case EVENT_MOVEMENT_FILAMENT_AND_ENGINE:
         if (this->engine_sensor.has_fast_movement())
         {
+            puts("Started EVENT_RETRACTION after EVENT_MOVING");
             return EVENT_RETRACTION;
         }
         this->filament_sensor.calculate_average_interval();
         this->engine_sensor.calculate_average_interval();
         return EVENT_MOVING;
     }
-
+    puts("Started EVENT_NONE after EVENT_MOVING");
     return EVENT_NONE;
 }
 
@@ -127,8 +137,14 @@ event_state_t EventController::handle_event_retraction(const event_movement_stat
 {
     if (EVENT_MOVEMENT_FILAMENT_AND_ENGINE == movement_state)
     {
-        return this->engine_sensor.has_fast_movement() ? EVENT_RETRACTION : EVENT_MOVING;
+        if (this->engine_sensor.has_fast_movement())
+        {
+            return EVENT_RETRACTION;
+        }
+        puts("Started EVENT_MOVING after EVENT_RETRACTION");
+        return EVENT_MOVING;
     }
+    puts("Started EVENT_NONE after EVENT_RETRACTION");
     return EVENT_NONE;
 }
 
@@ -136,10 +152,46 @@ event_state_t EventController::handle_event_retraction(const event_movement_stat
 
 event_state_t EventController::handle_event_manual_feed(const event_movement_state_t movement_state)
 {
-    return EVENT_MOVEMENT_ONLY_FILAMENT == movement_state ? EVENT_MANUAL_FEED : EVENT_NONE;
+    if (EVENT_MOVEMENT_ONLY_FILAMENT == movement_state)
+    {
+        return EVENT_MANUAL_FEED;
+    }
+    puts("Started EVENT_NONE after EVENT_MANUAL_FEED");
+    return EVENT_NONE;
 }
 
 /* --------------------------------------------------------------------------------------------- */
+
+event_state_t EventController::handle_event_suspection_on_error(const event_movement_state_t movement_state)
+{
+    if (EVENT_MOVEMENT_ONLY_ENGINE != movement_state)
+    {
+        if (EVENT_MOVEMENT_FILAMENT_AND_ENGINE == movement_state)
+        {
+            if (this->engine_sensor.has_fast_movement())
+            {
+                puts("Started EVENT_RETRACTION after EVENT_SUSPECTION_ON_ERROR");
+                return EVENT_RETRACTION;
+            }
+            puts("Started EVENT_MOVING after EVENT_SUSPECTION_ON_ERROR");
+            return EVENT_MOVING;
+        }
+        puts("Started EVENT_NONE after EVENT_SUSPECTION_ON_ERROR");
+        return EVENT_NONE;
+    }
+
+    if (this->timer.has_ended())
+    {
+        this->alarm->set(true);
+        this->timer.init(ERROR_WAIT_MILLISEC);
+        puts("!!! OPS !!! Started EVENT_WAITING_IN_ERROR after EVENT_SUSPECTION_ON_ERROR");
+        return EVENT_WAITING_IN_ERROR;
+    }
+    return EVENT_SUSPECTION_ON_ERROR;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+
 event_state_t EventController::handle_event_waiting_in_error(const event_movement_state_t movement_state)
 {
     if (!this->timer.has_ended())
@@ -147,9 +199,8 @@ event_state_t EventController::handle_event_waiting_in_error(const event_movemen
         return EVENT_WAITING_IN_ERROR;
     }
 
-    this->filament_sensor.reset();
-    this->engine_sensor.reset();
     this->alarm->set(false);
+    puts("Started EVENT_NONE after EVENT_WAITING_IN_ERROR");
 
     return EVENT_NONE;
 }
@@ -199,6 +250,9 @@ void EventController::heartbeat()
         break;
     case EVENT_MANUAL_FEED:
         this->state = this->handle_event_manual_feed(movement_state);
+        break;
+    case EVENT_SUSPECTION_ON_ERROR:
+        this->state = this->handle_event_suspection_on_error(movement_state);
         break;
     case EVENT_WAITING_IN_ERROR:
         this->state = this->handle_event_waiting_in_error(movement_state);

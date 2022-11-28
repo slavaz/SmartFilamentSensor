@@ -44,6 +44,7 @@ typedef enum
     EVENT_MOVING,
     EVENT_RETRACTION,
     EVENT_MANUAL_FEED,
+    EVENT_SUSPECTION_ON_ERROR,
     EVENT_WAITING_IN_ERROR,
 } event_state_t;
 
@@ -69,6 +70,7 @@ private:
     event_state_t handle_event_moving(const event_movement_state_t);
     event_state_t handle_event_retraction(const event_movement_state_t);
     event_state_t handle_event_manual_feed(const event_movement_state_t);
+    event_state_t handle_event_suspection_on_error(const event_movement_state_t);
     event_state_t handle_event_waiting_in_error(const event_movement_state_t);
 
 public:

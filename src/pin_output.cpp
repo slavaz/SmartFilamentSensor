@@ -39,6 +39,8 @@ void PinOutput::init(const uint pin)
     this->pin = pin;
     gpio_init(this->pin);
     gpio_set_dir(this->pin, GPIO_OUT);
+    gpio_pull_down(this->pin);
+    gpio_set_slew_rate(this->pin, GPIO_SLEW_RATE_SLOW);
 }
 
 /* --------------------------------------------------------------------------------------------- */
