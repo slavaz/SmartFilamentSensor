@@ -8,7 +8,7 @@ MockGpio mockGpio;
 void gpio_init(uint gpio)
 {
     mockGpio.methodWasCalled(MockGpioMethod__gpio_init);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_init_gpio, gpio);
+    mockGpio.setParameter(MockGpioMethodParameter__gpio_init__gpio, gpio);
 }
 
 bool gpio_get(uint gpio)
@@ -20,8 +20,8 @@ bool gpio_get(uint gpio)
 void gpio_set_dir(uint gpio, bool out)
 {
     mockGpio.methodWasCalled(MockGpioMethod__gpio_set_dir);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_dir_gpio, gpio);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_dir_out, out);
+    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_dir__gpio, gpio);
+    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_dir__out, out);
 }
 
 void gpio_pull_down(uint gpio)
@@ -32,15 +32,15 @@ void gpio_pull_down(uint gpio)
 void gpio_set_slew_rate(uint gpio, enum gpio_slew_rate slew)
 {
     mockGpio.methodWasCalled(MockGpioMethod__gpio_set_slew_rate);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_slew_rate_gpio, gpio);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_slew_rate_slew, slew);
+    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_slew_rate__gpio, gpio);
+    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_slew_rate__slew, slew);
 }
 
 void gpio_put(uint gpio, bool value)
 {
     mockGpio.methodWasCalled(MockGpioMethod__gpio_put);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_put_gpio, gpio);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_put_value, value);
+    mockGpio.setParameter(MockGpioMethodParameter__gpio_put__gpio, gpio);
+    mockGpio.setParameter(MockGpioMethodParameter__gpio_put__value, value);
 }
 
 // -----------------------------------

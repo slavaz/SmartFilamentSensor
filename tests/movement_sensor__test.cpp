@@ -14,11 +14,11 @@ TEST(MovementSensor, init)
   sensor.init(TEST_PIN_NUMBER);
 
   EXPECT_EQ(1, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_init));
-  EXPECT_EQ(TEST_PIN_NUMBER, mockGpio.getParameter(MockGpioMethodParameter__gpio_init_gpio));
+  EXPECT_EQ(TEST_PIN_NUMBER, mockGpio.getParameter(MockGpioMethodParameter__gpio_init__gpio));
 
   EXPECT_EQ(1, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_set_dir));
-  EXPECT_EQ(TEST_PIN_NUMBER, mockGpio.getParameter(MockGpioMethodParameter__gpio_set_dir_gpio));
-  EXPECT_EQ(0, mockGpio.getParameter(MockGpioMethodParameter__gpio_set_dir_out));
+  EXPECT_EQ(TEST_PIN_NUMBER, mockGpio.getParameter(MockGpioMethodParameter__gpio_set_dir__gpio));
+  EXPECT_EQ(0, mockGpio.getParameter(MockGpioMethodParameter__gpio_set_dir__out));
 
   EXPECT_EQ(1, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_pull_down));
 }

@@ -15,13 +15,13 @@ typedef enum
 
 typedef enum
 {
-    MockGpioMethodParameter__gpio_init_gpio,
-    MockGpioMethodParameter__gpio_set_dir_gpio,
-    MockGpioMethodParameter__gpio_set_dir_out,
-    MockGpioMethodParameter__gpio_set_slew_rate_gpio,
-    MockGpioMethodParameter__gpio_set_slew_rate_slew,
-    MockGpioMethodParameter__gpio_put_gpio,
-    MockGpioMethodParameter__gpio_put_value,
+    MockGpioMethodParameter__gpio_init__gpio,
+    MockGpioMethodParameter__gpio_set_dir__gpio,
+    MockGpioMethodParameter__gpio_set_dir__out,
+    MockGpioMethodParameter__gpio_set_slew_rate__gpio,
+    MockGpioMethodParameter__gpio_set_slew_rate__slew,
+    MockGpioMethodParameter__gpio_put__gpio,
+    MockGpioMethodParameter__gpio_put__value,
 } MockGpioMethodParameter;
 
 class MockGpio
