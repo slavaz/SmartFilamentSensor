@@ -41,8 +41,8 @@ private:
 
 private:
     static void lowlevel_init(const PIO, const uint);
-    static void lowlevel_set_clockdiv(pio_sm_config *const);
-    static pio_sm_config lowlevel_get_config(const uint);
+    static void lowlevel_setClockdiv(pio_sm_config *const);
+    static pio_sm_config lowlevel_getConfig(const uint);
 
 public:
     static const rgb_t RED;

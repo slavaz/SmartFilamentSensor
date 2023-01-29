@@ -31,15 +31,12 @@ class MovementSensor
 {
 private:
     uint pin;
-    bool old_value;
-
-private:
-    bool has_delayed_movement();
+    bool oldValue;
 
 public:
-    void init(const uint gpio);
+    void init(const uint);
 
-    bool has_movement();
+    bool hasMovement();
 };
 
 /*** global variables defined in .c file *********************************************************/

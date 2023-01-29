@@ -23,7 +23,7 @@ TEST(MovementSensor, init)
   EXPECT_EQ(1, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_pull_down));
 }
 
-TEST(MovementSensor, has_movement)
+TEST(MovementSensor, hasMovement)
 {
   MovementSensor sensor;
   mockGpio.reset();
@@ -31,20 +31,20 @@ TEST(MovementSensor, has_movement)
   sensor.init(TEST_PIN_NUMBER);
 
   mockGpio.setMethodReturnValue(MockGpioMethod__gpio_get, 0);
-  EXPECT_EQ(0, sensor.has_movement());
-  EXPECT_EQ(0, sensor.has_movement());
+  EXPECT_EQ(0, sensor.hasMovement());
+  EXPECT_EQ(0, sensor.hasMovement());
   EXPECT_EQ(2, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_get));
 
   mockGpio.setMethodReturnValue(MockGpioMethod__gpio_get, 1);
-  EXPECT_EQ(1, sensor.has_movement());
-  EXPECT_EQ(0, sensor.has_movement());
+  EXPECT_EQ(1, sensor.hasMovement());
+  EXPECT_EQ(0, sensor.hasMovement());
   EXPECT_EQ(4, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_get));
 
   mockGpio.setMethodReturnValue(MockGpioMethod__gpio_get, 0);
-  EXPECT_EQ(1, sensor.has_movement());
-  EXPECT_EQ(0, sensor.has_movement());
+  EXPECT_EQ(1, sensor.hasMovement());
+  EXPECT_EQ(0, sensor.hasMovement());
   EXPECT_EQ(6, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_get));
 
-  EXPECT_EQ(0, sensor.has_movement());
+  EXPECT_EQ(0, sensor.hasMovement());
   EXPECT_EQ(7, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_get));
 }

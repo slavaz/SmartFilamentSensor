@@ -31,15 +31,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Timer
 {
 private:
-    uint time_to_wait_milisec;
+    uint timeToWaitMilisec;
 
-    absolute_time_t start_time;
-    absolute_time_t current_time;
+    absolute_time_t startTime;
+    absolute_time_t currentTime;
 
 public:
     void init(const uint);
     void heartbeat();
-    bool has_ended();
+    bool hasEnded();
 };
 
 /*** global variables defined in .c file *********************************************************/

@@ -39,10 +39,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*** file scope variables ************************************************************************/
 
 // some googled magic here
-static const uint16_t rgb_led_instructions[] = {0x6221, 0x1123, 0x1400, 0xa442};
+static const uint16_t rgbLedInstructions[] = {0x6221, 0x1123, 0x1400, 0xa442};
 
-static const struct pio_program rgb_led_program = {
-    .instructions = rgb_led_instructions,
+static const struct pio_program rgbLedProgram = {
+    .instructions = rgbLedInstructions,
     .length = 4,
     .origin = -1,
 };
@@ -76,7 +76,7 @@ const rgb_t RgbLed::YELLOW = {
 /*** file scope functions ************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-pio_sm_config RgbLed::lowlevel_get_config(const uint offset)
+pio_sm_config RgbLed::lowlevel_getConfig(const uint offset)
 {
     pio_sm_config config;
 
@@ -89,7 +89,7 @@ pio_sm_config RgbLed::lowlevel_get_config(const uint offset)
 
 /* --------------------------------------------------------------------------------------------- */
 
-void RgbLed::lowlevel_set_clockdiv(pio_sm_config *const config)
+void RgbLed::lowlevel_setClockdiv(pio_sm_config *const config)
 {
     float clockdiv;
 
@@ -102,18 +102,18 @@ void RgbLed::lowlevel_set_clockdiv(pio_sm_config *const config)
 
 void RgbLed::lowlevel_init(const PIO pio, const uint pin)
 {
-    uint offset = pio_add_program(pio, &rgb_led_program);
+    uint offset = pio_add_program(pio, &rgbLedProgram);
     pio_sm_config config;
 
     pio_gpio_init(pio, pin);
     pio_sm_set_consecutive_pindirs(pio, RGB_LED__PIO_SM, pin, 1, true);
 
-    config = RgbLed::lowlevel_get_config(offset);
+    config = RgbLed::lowlevel_getConfig(offset);
     sm_config_set_sideset_pins(&config, pin);
     sm_config_set_out_shift(&config, false, true, RGB_LED__PIO_SHIFT);
     sm_config_set_fifo_join(&config, PIO_FIFO_JOIN_TX);
 
-    RgbLed::lowlevel_set_clockdiv(&config);
+    RgbLed::lowlevel_setClockdiv(&config);
 
     pio_sm_init(pio, RGB_LED__PIO_SM, offset, &config);
     pio_sm_set_enabled(pio, RGB_LED__PIO_SM, true);
@@ -134,11 +134,11 @@ void RgbLed::init(const pio_hw_t *pio, const uint pin)
 
 void RgbLed::set(const rgb_t *rgb)
 {
-    uint32_t pixel_grb;
+    uint32_t pixelGrb;
 
-    pixel_grb = (rgb->red << 16) | (rgb->green << 8) | (rgb->blue << 0);
+    pixelGrb = (rgb->red << 16) | (rgb->green << 8) | (rgb->blue << 0);
 
-    pio_sm_put_blocking(this->pio, 0, pixel_grb << 8u);
+    pio_sm_put_blocking(this->pio, 0, pixelGrb << 8u);
 }
 
 /* --------------------------------------------------------------------------------------------- */

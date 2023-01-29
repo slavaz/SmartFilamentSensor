@@ -33,28 +33,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*** public functions ****************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-void Timer::init(const uint time_to_wait_milisec)
+void Timer::init(const uint timeToWaitMilisec)
 {
-    this->time_to_wait_milisec = time_to_wait_milisec;
-    this->start_time = get_absolute_time();
+    this->timeToWaitMilisec = timeToWaitMilisec;
+    this->startTime = get_absolute_time();
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
 void Timer::heartbeat()
 {
-    this->current_time = get_absolute_time();
+    this->currentTime = get_absolute_time();
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
-bool Timer::has_ended()
+bool Timer::hasEnded()
 {
-    uint difference_millisec;
+    uint differenceMillisec;
 
-    difference_millisec = absolute_time_diff_us(this->start_time, this->current_time) / 1000;
+    differenceMillisec = absolute_time_diff_us(this->startTime, this->currentTime) / 1000;
 
-    return difference_millisec > this->time_to_wait_milisec;
+    return differenceMillisec > this->timeToWaitMilisec;
 }
 
 /* --------------------------------------------------------------------------------------------- */

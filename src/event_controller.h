@@ -53,29 +53,29 @@ typedef enum
 class EventController
 {
 private:
-    RgbLed *rgb_led;
+    RgbLed *rgbLed;
     PinOutput *alarm;
-    SensorManagement filament_sensor;
-    SensorManagement engine_sensor;
+    SensorManagement filamentSensor;
+    SensorManagement engineSensor;
     Timer timer;
 
     event_state_t state;
 
 private:
-    event_movement_state_t get_current_movement_state();
-    void show_decorations();
+    event_movement_state_t getCurrentMovementState();
+    void showDecorations();
 
-    event_state_t handle_event_none(const event_movement_state_t);
-    event_state_t handle_event_wait_before_moving(const event_movement_state_t);
-    event_state_t handle_event_moving(const event_movement_state_t);
-    event_state_t handle_event_retraction(const event_movement_state_t);
-    event_state_t handle_event_manual_feed(const event_movement_state_t);
-    event_state_t handle_event_suspection_on_error(const event_movement_state_t);
-    event_state_t handle_event_waiting_in_error(const event_movement_state_t);
+    event_state_t handleEvent_none(const event_movement_state_t);
+    event_state_t handleEvent_waitBeforeMoving(const event_movement_state_t);
+    event_state_t handleEvent_moving(const event_movement_state_t);
+    event_state_t handleEvent_retraction(const event_movement_state_t);
+    event_state_t handleEvent_manualFeed(const event_movement_state_t);
+    event_state_t handleEvent_suspectionOnError(const event_movement_state_t);
+    event_state_t handleEvent_waitingInError(const event_movement_state_t);
 
 public:
     void
-    init(RgbLed *const rgb_led, PinOutput *const alarm, MovementSensor *const filament_sensor, MovementSensor *const engine_sensor);
+    init(RgbLed *const, PinOutput *const, MovementSensor *const, MovementSensor *const);
     void heartbeat();
 };
 

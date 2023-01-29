@@ -31,14 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*** file scope functions ************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
-bool SensorManagement::has_delayed_movement()
+bool SensorManagement::hasDelayedMovement()
 {
-    absolute_time_t current_time;
+    absolute_time_t currentTime;
 
-    current_time = get_absolute_time();
-    this->difference_millisec = absolute_time_diff_us(this->last_movement_time, current_time) / 1000;
+    currentTime = get_absolute_time();
+    this->differenceMillisec = absolute_time_diff_us(this->lastMovementTime, currentTime) / 1000;
 
-    return this->difference_millisec < this->reading_delay;
+    return this->differenceMillisec < this->readingDelay;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -48,10 +48,10 @@ bool SensorManagement::has_delayed_movement()
 void SensorManagement::init(MovementSensor *const sensor)
 {
     this->sensor = sensor;
-    this->reading_delay = 0;
-    this->total_events_count = 0;
-    this->average_interval_between_events = 0;
-    this->has_sensor_movement = 0;
+    this->readingDelay = 0;
+    this->totalEventsCount = 0;
+    this->averageIntervalBetweenEvents = 0;
+    this->hasSensorMovement = 0;
 
     this->reset();
 }
@@ -60,16 +60,16 @@ void SensorManagement::init(MovementSensor *const sensor)
 
 void SensorManagement::reset()
 {
-    this->last_movement_time = get_absolute_time();
-    this->previous_difference_millisec = 0;
-    this->difference_millisec = 0;
+    this->lastMovementTime = get_absolute_time();
+    this->previousDifferenceMillisec = 0;
+    this->differenceMillisec = 0;
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
 void SensorManagement::heartbeat()
 {
-    this->has_sensor_movement = this->sensor->has_movement();
+    this->hasSensorMovement = this->sensor->hasMovement();
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -77,50 +77,50 @@ void SensorManagement::heartbeat()
 bool SensorManagement::moved()
 {
 
-    if (this->has_sensor_movement)
+    if (this->hasSensorMovement)
     {
-        this->last_movement_time = get_absolute_time();
-        this->previous_difference_millisec = this->difference_millisec;
-        this->difference_millisec = 0;
+        this->lastMovementTime = get_absolute_time();
+        this->previousDifferenceMillisec = this->differenceMillisec;
+        this->differenceMillisec = 0;
         return 1;
     }
 
-    return this->has_delayed_movement();
+    return this->hasDelayedMovement();
 }
 
 /* --------------------------------------------------------------------------------------------- */
-void SensorManagement::calculate_average_interval()
+void SensorManagement::calculateAverageInterval()
 {
-    if (this->difference_millisec != 0)
+    if (this->differenceMillisec != 0)
     {
-        this->average_interval_between_events = (this->average_interval_between_events * this->total_events_count + this->difference_millisec) /
-                                                (this->total_events_count + 1);
-        this->total_events_count++;
+        this->averageIntervalBetweenEvents = (this->averageIntervalBetweenEvents * this->totalEventsCount + this->differenceMillisec) /
+                                             (this->totalEventsCount + 1);
+        this->totalEventsCount++;
     }
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
-bool SensorManagement::has_fast_movement()
+bool SensorManagement::hasFastMovement()
 {
-    uint fast_movement_limit = this->average_interval_between_events / FAST_MOVE_MULTIPLIER;
+    uint fastMovementLimit = this->averageIntervalBetweenEvents / FAST_MOVE_MULTIPLIER;
 
-    return this->difference_millisec < fast_movement_limit && this->previous_difference_millisec < fast_movement_limit;
+    return this->differenceMillisec < fastMovementLimit && this->previousDifferenceMillisec < fastMovementLimit;
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
-void SensorManagement::set_reading_delay(const uint32_t reading_delay)
+void SensorManagement::setReadingDelay(const uint32_t readingDelay)
 {
-    this->reading_delay = reading_delay;
-    this->previous_difference_millisec = reading_delay;
+    this->readingDelay = readingDelay;
+    this->previousDifferenceMillisec = readingDelay;
 }
 
 /* --------------------------------------------------------------------------------------------- */
 
-uint32_t SensorManagement::get_reading_delay()
+uint32_t SensorManagement::getReadingDelay()
 {
-    return this->reading_delay;
+    return this->readingDelay;
 }
 
 /* --------------------------------------------------------------------------------------------- */

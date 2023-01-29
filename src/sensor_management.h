@@ -33,30 +33,30 @@ class SensorManagement
 {
 private:
     MovementSensor *sensor;
-    bool has_sensor_movement;
-    uint32_t reading_delay; // milliseconds
-    absolute_time_t last_movement_time;
-    uint difference_millisec;
-    uint previous_difference_millisec;
-    int64_t total_events_count;
-    uint average_interval_between_events;
+    bool hasSensorMovement;
+    uint32_t readingDelay; // milliseconds
+    absolute_time_t lastMovementTime;
+    uint differenceMillisec;
+    uint previousDifferenceMillisec;
+    int64_t totalEventsCount;
+    uint averageIntervalBetweenEvents;
 
 private:
-    bool has_delayed_movement();
+    bool hasDelayedMovement();
 
 public:
     void init(MovementSensor *const);
     void heartbeat();
-    void calculate_average_interval();
+    void calculateAverageInterval();
 
     void reset();
 
     bool moved();
 
-    bool has_fast_movement();
+    bool hasFastMovement();
 
-    void set_reading_delay(const uint32_t);
-    uint32_t get_reading_delay();
+    void setReadingDelay(const uint32_t);
+    uint32_t getReadingDelay();
 };
 
 /*** global variables defined in .c file *********************************************************/

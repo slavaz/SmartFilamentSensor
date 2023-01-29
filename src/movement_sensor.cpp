@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void MovementSensor::init(const uint gpio)
 {
     this->pin = gpio;
-    this->old_value = 0;
+    this->oldValue = 0;
 
     gpio_init(this->pin);
     gpio_set_dir(this->pin, GPIO_IN);
@@ -47,14 +47,14 @@ void MovementSensor::init(const uint gpio)
 
 /* --------------------------------------------------------------------------------------------- */
 
-bool MovementSensor::has_movement()
+bool MovementSensor::hasMovement()
 {
-    bool current_value;
+    bool currentValue;
 
-    current_value = gpio_get(this->pin);
-    if (this->old_value != current_value)
+    currentValue = gpio_get(this->pin);
+    if (this->oldValue != currentValue)
     {
-        this->old_value = current_value;
+        this->oldValue = currentValue;
         return 1;
     }
 
