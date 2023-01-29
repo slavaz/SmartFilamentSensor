@@ -1,5 +1,17 @@
 cmake_minimum_required(VERSION 3.13)
 
+include(ExternalProject)
+
+ExternalProject_Add(
+    SmatrFilamentSensor_tests
+    SOURCE_DIR ${CMAKE_SOURCE_DIR}/tests
+    PREFIX ${CMAKE_BINARY_DIR}/tests
+    BINARY_DIR ${CMAKE_BINARY_DIR}/tests
+    INSTALL_COMMAND ""
+    BUILD_ALWAYS 1
+ )
+
+
 include(cmake/pico_sdk_import.cmake)
 include(cmake/version.cmake)
 
@@ -17,3 +29,7 @@ endif()
 pico_sdk_init()
 
 add_subdirectory(src)
+
+ADD_CUSTOM_TARGET(test
+  COMMAND make -C ${CMAKE_BINARY_DIR}/tests test
+)
