@@ -74,7 +74,7 @@ const rgb_t RgbLed::YELLOW = {
 };
 
 /*** file scope functions ************************************************************************/
-/* --------------------------------------------------------------------------------------------- */
+/* -----    ---------------------------------------------------------------------------------------- */
 
 pio_sm_config RgbLed::lowlevel_getConfig(const uint offset)
 {
@@ -138,7 +138,7 @@ void RgbLed::set(const rgb_t *rgb)
 
     pixelGrb = (rgb->red << 16) | (rgb->green << 8) | (rgb->blue << 0);
 
-    pio_sm_put_blocking(this->pio, 0, pixelGrb << 8u);
+    pio_sm_put_blocking(this->pio, RGB_LED__PIO_SM, pixelGrb << 8u);
 }
 
 /* --------------------------------------------------------------------------------------------- */
