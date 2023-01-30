@@ -4,7 +4,6 @@
 
 #define TEST_PIN_NUMBER 123
 
-// Demonstrate some basic assertions.
 TEST(MovementSensor, init)
 {
   MovementSensor sensor;

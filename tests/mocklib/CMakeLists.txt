@@ -1,6 +1,7 @@
 add_library(mocklib SHARED
+        clocks.cpp
         gpio.cpp
         pio.cpp
-        clocks.cpp
+        time.cpp
         )
 include_directories (./)
