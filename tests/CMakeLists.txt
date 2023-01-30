@@ -10,20 +10,21 @@ enable_testing()
 find_package(GTest REQUIRED)
 include(GoogleTest)
 
-include_directories (mocklib ../src)
+set(CMAKE_ROOT_DIR ..)
+set(CMAKE_ROOT_SRC_DIR ${CMAKE_ROOT_DIR}/src)
+
+include_directories (mocklib ${CMAKE_ROOT_SRC_DIR})
 
 
-add_executable(movement_sensor__test
-    movement_sensor__test.cpp
-    ../src/movement_sensor.cpp
-)
-target_link_libraries(movement_sensor__test GTest::GTest GTest::Main mocklib)
-gtest_discover_tests(movement_sensor__test)
+file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *__test.cpp)
 
+foreach(testSrc ${TEST_SRCS})
+    get_filename_component(testName ${testSrc} NAME_WE)
 
-add_executable(pin_output__test
-    pin_output__test.cpp
-    ../src/pin_output.cpp
-)
-target_link_libraries(pin_output__test GTest::GTest GTest::Main mocklib)
-gtest_discover_tests(pin_output__test)
+    if (testName MATCHES "^(.*)__test$")
+        set(sourceFileName ${CMAKE_MATCH_1})
+        add_executable(${testName} ${testSrc} ${CMAKE_ROOT_SRC_DIR}/${sourceFileName}.cpp)
+        target_link_libraries(${testName} GTest::GTest GTest::Main mocklib)
+        gtest_discover_tests(${testName})
+    endif()
+endforeach(testSrc)

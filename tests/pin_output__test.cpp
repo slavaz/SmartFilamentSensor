@@ -12,7 +12,7 @@ TEST(PinOutput, init)
     pinOutput.init(TEST_PIN_NUMBER);
 
     EXPECT_EQ(1, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_init));
-    EXPECT_EQ(TEST_PIN_NUMBER, mockGpio.getParameter(MockGpioMethodParameter__gpio_init__gpio));
+    EXPECT_EQ(TEST_PIN_NUMBER, (int)mockGpio.getParameter(MockGpioMethodParameter__gpio_init__gpio));
 
     EXPECT_EQ(1, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_set_dir));
     EXPECT_EQ(TEST_PIN_NUMBER, mockGpio.getParameter(MockGpioMethodParameter__gpio_set_dir__gpio));

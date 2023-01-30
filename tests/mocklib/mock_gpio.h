@@ -1,7 +1,7 @@
 #ifndef MOCK_GPIO__H
 #define MOCK_GPIO__H
 
-#include <map>
+#include "base_mock.h"
 
 typedef enum
 {
@@ -24,28 +24,10 @@ typedef enum
     MockGpioMethodParameter__gpio_put__value,
 } MockGpioMethodParameter;
 
-class MockGpio
+class MockGpio : public BaseMock<MockGpioMethod, MockGpioMethodParameter>
 {
 private:
-    std::map<MockGpioMethod, int> methodCountCalls;
-    std::map<MockGpioMethodParameter, int> methodParameters;
-    std::map<MockGpioMethod, int> methodReturnValue;
-
 public:
-    MockGpio();
-    virtual ~MockGpio();
-    void reset();
-
-    void methodWasCalled(const MockGpioMethod);
-
-    void setMethodReturnValue(const MockGpioMethod, int);
-    int getMethodReturnValue(const MockGpioMethod);
-
-    void setParameter(const MockGpioMethodParameter, int);
-
-    uint getParameter(const MockGpioMethodParameter);
-
-    int getCountMethodCalls(const MockGpioMethod);
 };
 
 extern MockGpio mockGpio;
