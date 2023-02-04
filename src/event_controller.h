@@ -55,9 +55,9 @@ class EventController
 private:
     RgbLed *rgbLed;
     PinOutput *alarm;
-    SensorManagement filamentSensor;
-    SensorManagement engineSensor;
-    Timer timer;
+    SensorManagement *filamentSensor;
+    SensorManagement *engineSensor;
+    Timer *timer;
 
     event_state_t state;
 
@@ -74,8 +74,10 @@ private:
     event_state_t handleEvent_waitingInError(const event_movement_state_t);
 
 public:
-    void
-    init(RgbLed *const, PinOutput *const, MovementSensor *const, MovementSensor *const);
+    EventController();
+    EventController(SensorManagement *, SensorManagement *, Timer *);
+
+    void init(RgbLed *const, PinOutput *const, MovementSensor *const, MovementSensor *const);
     void heartbeat();
 };
 
