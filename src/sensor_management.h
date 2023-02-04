@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class SensorManagement
 {
-private:
+protected:
     MovementSensor *sensor;
     bool hasSensorMovement;
     uint32_t readingDelay; // milliseconds
@@ -41,7 +41,7 @@ private:
     int64_t totalEventsCount;
     uint averageIntervalBetweenEvents;
 
-private:
+protected:
     bool hasDelayedMovement();
 
 public:

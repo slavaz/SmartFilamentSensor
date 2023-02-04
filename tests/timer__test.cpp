@@ -36,9 +36,8 @@ protected:
 
 TEST_P(TimerHasEndedParametersTests, ChecksHasEnded)
 {
-    int from = std::get<0>(GetParam());
-    int to = std::get<1>(GetParam());
-    bool actualResult, expectedResult = std::get<2>(GetParam());
+    auto [from, to, expectedResult] = GetParam();
+    bool actualResult;
 
     mockTime.reset();
 
@@ -55,7 +54,7 @@ TEST_P(TimerHasEndedParametersTests, ChecksHasEnded)
 
     EXPECT_EQ(expectedResult, actualResult);
 }
-
+// from, to, expectedResult
 INSTANTIATE_TEST_CASE_P(
     Timer,
     TimerHasEndedParametersTests,

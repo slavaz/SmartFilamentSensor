@@ -185,29 +185,35 @@ TEST(RgbLed, init__pio_sm_set_enabled)
     EXPECT_EQ(true, mockPio.getParameter(MockPioMethodParameter__pio_sm_set_enabled__enabled));
 }
 
-TEST(RgbLed, set)
+class RgbLedSetParametersTests : public ::testing::TestWithParam<std::tuple<rgb_t *, uint>>
 {
+protected:
     RgbLed rgbLed;
+};
+
+TEST_P(RgbLedSetParametersTests, setTime)
+{
+    auto [color, expectedResult] = GetParam();
+    uintptr_t actualResult;
 
     mockPio.reset();
 
     rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-    rgbLed.set(&RgbLed::BLUE);
+    rgbLed.set(color);
 
     EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__pio_sm_put_blocking));
     EXPECT_EQ(TEST_PIO, mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__pio));
     EXPECT_EQ(0, mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__sm));
-    EXPECT_EQ(0x0000FF00, mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__data));
-
-    rgbLed.set(&RgbLed::GREEN);
-    EXPECT_EQ(2, mockPio.getCountMethodCalls(MockPioMethod__pio_sm_put_blocking));
-    EXPECT_EQ(0x00FF0000, mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__data));
-
-    rgbLed.set(&RgbLed::RED);
-    EXPECT_EQ(3, mockPio.getCountMethodCalls(MockPioMethod__pio_sm_put_blocking));
-    EXPECT_EQ(0xFF000000, mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__data));
-
-    rgbLed.set(&RgbLed::YELLOW);
-    EXPECT_EQ(4, mockPio.getCountMethodCalls(MockPioMethod__pio_sm_put_blocking));
-    EXPECT_EQ(0xFFFF0000, mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__data));
+    actualResult = mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__data);
+    EXPECT_EQ(expectedResult, actualResult);
 }
+
+// color, expectedResult
+INSTANTIATE_TEST_CASE_P(
+    RgbLed,
+    RgbLedSetParametersTests,
+    ::testing::Values(
+        std::make_tuple((rgb_t *)&RgbLed::BLUE, 0x0000FF00),
+        std::make_tuple((rgb_t *)&RgbLed::GREEN, 0x00FF0000),
+        std::make_tuple((rgb_t *)&RgbLed::RED, 0xFF000000),
+        std::make_tuple((rgb_t *)&RgbLed::YELLOW, 0xFFFF0000)));

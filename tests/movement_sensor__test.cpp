@@ -47,3 +47,4 @@ TEST(MovementSensor, hasMovement)
   EXPECT_EQ(0, sensor.hasMovement());
   EXPECT_EQ(7, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_get));
 }
+

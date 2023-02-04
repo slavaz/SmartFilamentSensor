@@ -29,14 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class MovementSensor
 {
-private:
+protected:
     uint pin;
     bool oldValue;
 
 public:
-    void init(const uint);
+    virtual void init(const uint);
 
-    bool hasMovement();
+    virtual bool hasMovement();
 };
 
 /*** global variables defined in .c file *********************************************************/

@@ -33,11 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 bool SensorManagement::hasDelayedMovement()
 {
-    absolute_time_t currentTime;
-
-    currentTime = get_absolute_time();
-    this->differenceMillisec = absolute_time_diff_us(this->lastMovementTime, currentTime) / 1000;
-
     return this->differenceMillisec < this->readingDelay;
 }
 
@@ -70,10 +65,11 @@ void SensorManagement::reset()
 void SensorManagement::heartbeat()
 {
     this->hasSensorMovement = this->sensor->hasMovement();
+
+    this->differenceMillisec = absolute_time_diff_us(this->lastMovementTime, get_absolute_time()) / 1000;
 }
 
 /* --------------------------------------------------------------------------------------------- */
-
 bool SensorManagement::moved()
 {
 
@@ -82,7 +78,7 @@ bool SensorManagement::moved()
         this->lastMovementTime = get_absolute_time();
         this->previousDifferenceMillisec = this->differenceMillisec;
         this->differenceMillisec = 0;
-        return 1;
+        return true;
     }
 
     return this->hasDelayedMovement();
