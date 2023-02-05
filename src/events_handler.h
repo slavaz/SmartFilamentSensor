@@ -1,6 +1,6 @@
 /*
 This file is part of the SmartFilamentSensor distribution
-Copyright (C) 2022,2023 Slava Zanko
+Copyright (C) 2023 Slava Zanko
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef EVENT_CONTROLLER__H
-#define EVENT_CONTROLLER__H
+#ifndef EVENTS_HANDLER__H
+#define EVENTS_HANDLER__H
 
-#include "pin_output.h"
-#include "rgb_led.h"
-#include "events_handler.h"
-#include "movement_state.h"
+#include <map>
+
+#include "event_data.h"
+#include "event/event_handler.h"
 
 /*** typedefs(not structures) and defined constants **********************************************/
 
@@ -30,32 +30,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*** structures declarations (and typedefs of structures)*****************************************/
 
-class EventController
+class EventsHandler : public EventHandler
 {
-private:
-    RgbLed *rgbLed;
-    PinOutput *alarm;
-    EventsHandler *eventsHandler;
-
-    event_data_t eventData;
+public:
+    typedef std::map<event_type_t, EventHandler *> handlers_t;
 
 private:
-    event_movement_state_t getCurrentMovementState();
-    void showDecorations();
-    void handleAlarm();
+    handlers_t *handlers;
+
+    static handlers_t defaultHandlers;
 
 public:
-    EventController();
-    EventController(SensorManagement *, SensorManagement *, Timer *, EventsHandler *);
+    EventsHandler();
+    EventsHandler(handlers_t *);
 
-    void init(RgbLed *const, PinOutput *const, MovementSensor *const, MovementSensor *const);
-    void heartbeat();
+    event_type_t handle(event_data_t *);
 };
 
 /*** global variables defined in .c file *********************************************************/
 
 /*** declarations of public functions ************************************************************/
-
 /*** inline functions ****************************************************************************/
 
-#endif /* EVENT_CONTROLLER__H */
+#endif /* EVENTS_HANDLER__H */

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SENSOR_MANAGEMENT__H
 #define SENSOR_MANAGEMENT__H
 
-#include "pico/stdlib.h"
+#include <pico/stdlib.h>
 #include <pico/time.h>
 #include "movement_sensor.h"
 

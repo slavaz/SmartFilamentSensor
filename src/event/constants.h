@@ -1,6 +1,6 @@
 /*
 This file is part of the SmartFilamentSensor distribution
-Copyright (C) 2022,2023 Slava Zanko
+Copyright (C) 2023 Slava Zanko
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,46 +16,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef EVENT_CONTROLLER__H
-#define EVENT_CONTROLLER__H
-
-#include "pin_output.h"
-#include "rgb_led.h"
-#include "events_handler.h"
-#include "movement_state.h"
+#ifndef EVENT_CONSTANTS__H
+#define EVENT_CONSTANTS__H
 
 /*** typedefs(not structures) and defined constants **********************************************/
 
+#define WAIT_BEFORE_MOVING_MILLISEC 300
+#define ERROR_TOLERANCE_MILLISEC 500
+#define ERROR_WAIT_MILLISEC 4000
+
 /*** enums ***************************************************************************************/
-
 /*** structures declarations (and typedefs of structures)*****************************************/
-
-class EventController
-{
-private:
-    RgbLed *rgbLed;
-    PinOutput *alarm;
-    EventsHandler *eventsHandler;
-
-    event_data_t eventData;
-
-private:
-    event_movement_state_t getCurrentMovementState();
-    void showDecorations();
-    void handleAlarm();
-
-public:
-    EventController();
-    EventController(SensorManagement *, SensorManagement *, Timer *, EventsHandler *);
-
-    void init(RgbLed *const, PinOutput *const, MovementSensor *const, MovementSensor *const);
-    void heartbeat();
-};
-
 /*** global variables defined in .c file *********************************************************/
-
 /*** declarations of public functions ************************************************************/
-
 /*** inline functions ****************************************************************************/
 
-#endif /* EVENT_CONTROLLER__H */
+#endif /* EVENT_CONSTANTS__H */

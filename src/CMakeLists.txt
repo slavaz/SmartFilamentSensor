@@ -1,12 +1,17 @@
+file(GLOB EVENT_HANDLERS_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} event/*.cpp)
+
 add_executable(SmartFilamentSensor
         main.cpp
         pin_output.cpp
         event_controller.cpp
+        events_handler.cpp
         sensor_management.cpp
         movement_sensor.cpp
         timer.cpp
         rgb_led.cpp
+        ${EVENT_HANDLERS_SOURCES}
         )
+
 
 set_target_properties(
     SmartFilamentSensor
