@@ -38,7 +38,7 @@ private:
 
 public:
     void init(const uint);
-    void heartbeat();
+    virtual void heartbeat();
     bool hasEnded();
 };
 

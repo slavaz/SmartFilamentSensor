@@ -47,9 +47,13 @@ EventController::getCurrentMovementState()
     filamentMoved = this->eventData.filamentSensor->moved();
     engineMoved = this->eventData.engineSensor->moved();
 
-    movementState = (filamentMoved && !engineMoved) ? EVENT_MOVEMENT_ONLY_FILAMENT : (!filamentMoved && engineMoved) ? EVENT_MOVEMENT_ONLY_ENGINE
-                                                                                 : (filamentMoved && engineMoved)    ? EVENT_MOVEMENT_FILAMENT_AND_ENGINE
-                                                                                                                     : EVENT_MOVEMENT_STOP;
+    movementState = (filamentMoved && !engineMoved)
+                        ? EVENT_MOVEMENT_ONLY_FILAMENT
+                    : (!filamentMoved && engineMoved)
+                        ? EVENT_MOVEMENT_ONLY_ENGINE
+                    : (filamentMoved && engineMoved)
+                        ? EVENT_MOVEMENT_FILAMENT_AND_ENGINE
+                        : EVENT_MOVEMENT_STOP;
 
     return movementState;
 }
@@ -102,12 +106,12 @@ EventController::EventController()
 
 /* --------------------------------------------------------------------------------------------- */
 
-EventController::EventController(SensorManagement *filamentSensor, SensorManagement *engineSensor, Timer *timer, EventsHandler *eventHandler)
+EventController::EventController(SensorManagement *filamentSensor, SensorManagement *engineSensor, Timer *timer, EventsHandler *eventsHandler)
 {
     this->eventData.filamentSensor = filamentSensor;
     this->eventData.engineSensor = engineSensor;
     this->eventData.timer = timer;
-    this->eventsHandler = eventHandler;
+    this->eventsHandler = eventsHandler;
 }
 
 /* --------------------------------------------------------------------------------------------- */
@@ -132,8 +136,8 @@ void EventController::heartbeat()
     this->eventData.timer->heartbeat();
     this->eventData.engineSensor->heartbeat();
     this->eventData.filamentSensor->heartbeat();
-    this->eventData.movementState = this->getCurrentMovementState();
 
+    this->eventData.movementState = this->getCurrentMovementState();
     this->eventData.state = this->eventsHandler->handle(&this->eventData);
 
     this->handleAlarm();

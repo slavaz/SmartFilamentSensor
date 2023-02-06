@@ -44,7 +44,7 @@ public:
     EventsHandler();
     EventsHandler(handlers_t *);
 
-    event_type_t handle(event_data_t *);
+    virtual event_type_t handle(event_data_t *);
 };
 
 /*** global variables defined in .c file *********************************************************/

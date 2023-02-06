@@ -45,7 +45,7 @@ void PinOutput::init(const uint pin)
 
 /* --------------------------------------------------------------------------------------------- */
 
-void PinOutput::set(const bool alarmFlag)
+void PinOutput::set(bool alarmFlag)
 {
     gpio_put(this->pin, alarmFlag);
 }

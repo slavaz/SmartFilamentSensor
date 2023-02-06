@@ -34,7 +34,7 @@ private:
 
 public:
     void init(const uint);
-    void set(const bool);
+    virtual void set(bool);
 };
 
 /*** global variables defined in .c file *********************************************************/

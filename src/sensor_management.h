@@ -45,17 +45,17 @@ protected:
     bool hasDelayedMovement();
 
 public:
-    void init(MovementSensor *const);
-    void heartbeat();
+    virtual void init(MovementSensor *const);
+    virtual void heartbeat();
     void calculateAverageInterval();
 
     void reset();
 
-    bool moved();
+    virtual bool moved();
 
     bool hasFastMovement();
 
-    void setReadingDelay(const uint32_t);
+    virtual void setReadingDelay(const uint32_t);
     uint32_t getReadingDelay();
 };
 

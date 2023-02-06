@@ -52,7 +52,7 @@ public:
 
 public:
     void init(const pio_hw_t *, const uint);
-    void set(const rgb_t *);
+    virtual void set(const rgb_t *);
 };
 
 /*** global variables defined in .c file *********************************************************/

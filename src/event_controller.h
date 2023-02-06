@@ -37,12 +37,13 @@ private:
     PinOutput *alarm;
     EventsHandler *eventsHandler;
 
-    event_data_t eventData;
-
 private:
     event_movement_state_t getCurrentMovementState();
     void showDecorations();
     void handleAlarm();
+
+protected:
+    event_data_t eventData;
 
 public:
     EventController();
