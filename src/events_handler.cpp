@@ -74,7 +74,7 @@ event_type_t EventsHandler::handle(event_data_t *eventData)
 
     return (this->handlers->find(eventData->state) == this->handlers->end())
                ? EVENT_NONE
-               : this->handlers->at(EVENT_NONE)->handle(eventData);
+               : this->handlers->at(eventData->state)->handle(eventData);
 }
 
 /* --------------------------------------------------------------------------------------------- */

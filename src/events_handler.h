@@ -36,9 +36,10 @@ public:
     typedef std::map<event_type_t, EventHandler *> handlers_t;
 
 private:
-    handlers_t *handlers;
-
     static handlers_t defaultHandlers;
+
+protected:
+    handlers_t *handlers;
 
 public:
     EventsHandler();

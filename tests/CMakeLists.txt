@@ -29,6 +29,12 @@ set (event_controller__test_SOURCES
     ${EVENT_HANDLERS_SRC}
 )
 
+set (events_handler__test_SOURCES 
+    ${CMAKE_ROOT_SRC_DIR}/events_handler.cpp 
+    ${CMAKE_ROOT_SRC_DIR}/sensor_management.cpp 
+    ${CMAKE_ROOT_SRC_DIR}/timer.cpp 
+    ${EVENT_HANDLERS_SRC}
+)
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *__test.cpp)
 
 foreach(testSrc ${TEST_SRCS})
