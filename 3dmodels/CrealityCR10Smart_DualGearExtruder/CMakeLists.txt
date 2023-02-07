@@ -29,5 +29,6 @@ add_custom_target(generate_stls
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Running FreeCAD"
 )
+install(FILES ${STL_FILE_NAMES} DESTINATION stls)
 
 unset(STL_FILE_NAMES)

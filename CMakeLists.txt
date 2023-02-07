@@ -34,3 +34,9 @@ add_subdirectory(src)
 ADD_CUSTOM_TARGET(test
   COMMAND make -C ${CMAKE_BINARY_DIR}/tests test
 )
+
+set(CPACK_GENERATOR "TBZ2")
+set(CPACK_SOURCE_GENERATOR "TBZ2")
+set(CPACK_PACKAGE_DIRECTORY ${PROJECT_BINARY_DIR}/package)
+
+include(CPack)

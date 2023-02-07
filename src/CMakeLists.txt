@@ -33,3 +33,5 @@ target_link_libraries(SmartFilamentSensor
 
 # create map/bin/hex file etc.
 pico_add_extra_outputs(SmartFilamentSensor)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/$<IF:$<BOOL:$<TARGET_PROPERTY:SmartFilamentSensor,OUTPUT_NAME>>,$<TARGET_PROPERTY:SmartFilamentSensor,OUTPUT_NAME>,$<TARGET_PROPERTY:SmartFilamentSensor,NAME>>.bin DESTINATION firmware)
