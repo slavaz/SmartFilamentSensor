@@ -20,7 +20,7 @@ set_target_properties(
 )
 
 pico_set_program_name(SmartFilamentSensor "SmartFilamentSensor")
-pico_set_program_version(SmartFilamentSensor "0.1")
+pico_set_program_version(SmartFilamentSensor ${GIT_TAG})
 
 pico_enable_stdio_usb(SmartFilamentSensor 1)
 pico_enable_stdio_uart(SmartFilamentSensor 0)

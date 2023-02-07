@@ -17,6 +17,7 @@ include(cmake/version.cmake)
 
 project(SmartFilamentSensor
     LANGUAGES C CXX ASM
+    VERSION ${GIT_TAG}
 )
 
 set(CMAKE_C_STANDARD 11)
