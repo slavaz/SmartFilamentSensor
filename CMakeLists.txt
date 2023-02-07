@@ -14,6 +14,7 @@ ExternalProject_Add(
 
 include(cmake/pico_sdk_import.cmake)
 include(cmake/version.cmake)
+include(cmake/release.cmake)
 
 project(SmartFilamentSensor
     LANGUAGES C CXX ASM
