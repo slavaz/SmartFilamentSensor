@@ -1,0 +1,29 @@
+import Mesh, Part
+import MeshPart
+
+documentName="@FREECAD_DOCUMENT_NAME@"
+
+FreeCAD.openDocument("@CMAKE_CURRENT_LIST_DIR@/"+documentName+".FCStd")
+App.setActiveDocument(documentName)
+activeDocument=App.getDocument(documentName)
+
+
+def importObjectToStl(activeDocument, objectLabel):
+    meshObject=activeDocument.addObject("Mesh::Feature","Mesh")
+    partObject=activeDocument.getObjectsByLabel(objectLabel)[0]
+    shapeObject=Part.getShape(partObject,"")
+    meshObject.Mesh=MeshPart.meshFromShape(Shape=shapeObject, LinearDeflection=0.01, AngularDeflection=0.0872665, Relative=False)
+    meshObject.Label="MainBody (Meshed)"
+    del meshObject, partObject, shapeObject
+    objectsToExport=[]
+    objectsToExport.append(activeDocument.getObject("Mesh001"))
+    Mesh.export(objectsToExport, documentName+"-"+objectLabel+".stl")
+    del objectsToExport
+    activeDocument.removeObject('Mesh001')
+
+
+for objectLabel in [@FREECAD_OBJECT_NAMES_TEXT@]:
+    importObjectToStl(activeDocument, objectLabel)
+
+
+del activeDocument

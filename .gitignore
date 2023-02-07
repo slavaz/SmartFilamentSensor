@@ -1,3 +1,5 @@
 
 build
 .vscode
+*.stl
+export-to-stl.freecad.script

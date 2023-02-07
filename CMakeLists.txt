@@ -5,7 +5,7 @@ include(ExternalProject)
 ExternalProject_Add(
     SmatrFilamentSensor_tests
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/tests
-    PREFIX ${CMAKE_BINARY_DIR}/tests
+    PREFIX ExternalProject
     BINARY_DIR ${CMAKE_BINARY_DIR}/tests
     INSTALL_COMMAND ""
     BUILD_ALWAYS 1
@@ -28,6 +28,7 @@ endif()
 
 pico_sdk_init()
 
+add_subdirectory(3dmodels)
 add_subdirectory(src)
 
 ADD_CUSTOM_TARGET(test
