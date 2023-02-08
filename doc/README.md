@@ -83,3 +83,9 @@ Disadvantages
 ---
 
 Periodically need to clean up rubber ring as filament may slippage due to lost adgesion. To avoid it, you can use some kind of 'Filament cleaners' like https://www.thingiverse.com/thing:2440593 or https://www.thingiverse.com/thing:190118
+
+
+TODO
+---
+To design in FreeCAD nice box for RP2040Zero. As for me, it works as well and functionality is enough, so if you feel that it isn't perfect and you need to show off your 3D-printer with the SmartSensor to you friends- feel free to design the box and create pull request... I'm so lazy to do the last step ;)
+
