@@ -74,3 +74,12 @@ Software
 If you only want to assembly the Smart Filament Sensor, then you don't need any additional software. Download only the [latest releases](../releases/)  files and follow [step-by-step](Step-by-step.md) instruction.
 
 If you want to contribute the project (eg, if you want to improve existing source codes or to add support of STM32 or Arduino boards), please follow [Development](Development.md) instructions
+
+Advanages
+---
+Better control of filament moving
+
+Disadvantages
+---
+
+Periodically need to clean up rubber ring as filament may slippage due to lost adgesion. To avoid it, you can use some kind of 'Filament cleaners' like https://www.thingiverse.com/thing:2440593 or https://www.thingiverse.com/thing:190118
