@@ -16,29 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <gtest/gtest.h>
-#include "gmock/gmock.h"
+#include "test_common_handler.h"
 
 #include "event/event_handler_none.h"
 
-class MockTimer : public Timer
+class EventHandlerNoneTests : public ::testing::TestWithParam<std::tuple<int, int, event_movement_state_t, event_type_t>>, public TestCommonHandler<EventHandlerNone>
 {
-public:
-    MOCK_METHOD(void, init, (const uint), (override));
-};
-
-class EventHandlerNoneTests : public ::testing::TestWithParam<std::tuple<int, int, event_movement_state_t, event_type_t>>
-{
-protected:
-    event_data_t eventData;
-    MockTimer timer;
-
-    EventHandlerNone handler;
-};
-
-MATCHER_P(isArgEqual, expected, std::string(negation ? "is" : "isn't") + " match " + std::to_string(expected))
-{
-    return arg == expected;
 };
 
 TEST_P(EventHandlerNoneTests, handle)
@@ -48,7 +31,6 @@ TEST_P(EventHandlerNoneTests, handle)
           movementState,
           expectedResult] = GetParam();
 
-    eventData.timer = &timer;
     eventData.movementState = movementState;
 
     EXPECT_CALL(timer, init(isArgEqual(timerExpectedParamValue))).Times(timerCalls);

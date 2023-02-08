@@ -16,39 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <gtest/gtest.h>
-#include "gmock/gmock.h"
+#include "test_common_handler.h"
 
 #include "event/event_handler_moving.h"
 
-using ::testing::Return;
-using ::testing::StrictMock;
-
-class MockTimer : public Timer
+class EventHandlerMovingTests : public ::testing::TestWithParam<std::tuple<int, int, event_movement_state_t, event_type_t, int, bool, int>>, public TestCommonHandler<EventHandlerMoving>
 {
-public:
-    MOCK_METHOD(void, init, (const uint), (override));
-};
-
-class MockSensorManagement : public SensorManagement
-{
-public:
-    MOCK_METHOD(void, calculateAverageInterval, (), (override));
-    MOCK_METHOD(bool, hasFastMovement, (), (override));
-};
-class EventHandlerMovingTests : public ::testing::TestWithParam<std::tuple<int, int, event_movement_state_t, event_type_t, int, bool, int>>
-{
-protected:
-    event_data_t eventData;
-    StrictMock<MockTimer> timer;
-    StrictMock<MockSensorManagement> filamentSensor, engineSensor;
-
-    EventHandlerMoving handler;
-};
-
-MATCHER_P(isArgEqual, expected, std::string(negation ? "is" : "isn't") + " match " + std::to_string(expected))
-{
-    return arg == expected;
 };
 
 TEST_P(EventHandlerMovingTests, handle)
@@ -60,10 +33,6 @@ TEST_P(EventHandlerMovingTests, handle)
           countCallsHasFastMovement,
           retValHasFastMovement,
           countCallsCalculateAverageInterval] = GetParam();
-
-    eventData.timer = &timer;
-    eventData.filamentSensor = &filamentSensor;
-    eventData.engineSensor = &engineSensor;
 
     eventData.movementState = movementState;
 

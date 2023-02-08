@@ -16,16 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <gtest/gtest.h>
+#include "test_common_handler.h"
 
 #include "event/event_handler_manualfeed.h"
 
-class EventHandlerManualFeedTests : public ::testing::TestWithParam<std::tuple<event_movement_state_t, event_type_t>>
+class EventHandlerManualFeedTests : public ::testing::TestWithParam<std::tuple<event_movement_state_t, event_type_t>>, public TestCommonHandler<EventHandlerManualFeed>
 {
-protected:
-    event_data_t eventData;
-
-    EventHandlerManualFeed handler;
 };
 
 TEST_P(EventHandlerManualFeedTests, handle)

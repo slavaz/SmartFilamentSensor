@@ -12,13 +12,9 @@ set(CMAKE_ROOT_SRC_EVENT_DIR ${CMAKE_ROOT_SRC_DIR}/event)
 
 include_directories (${CMAKE_TEST_ROOT_DIR}/mocklib ${CMAKE_ROOT_SRC_DIR})
 
-
-set (event_handler_none__test_SOURCES ${CMAKE_ROOT_SRC_DIR}/timer.cpp)
-
-set (event_handler_moving__test_SOURCES 
+set(COMMON_TEST_SOURCES
         ${CMAKE_ROOT_SRC_DIR}/sensor_management.cpp   
         ${CMAKE_ROOT_SRC_DIR}/timer.cpp)
-
 
 
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *__test.cpp)
@@ -31,7 +27,11 @@ foreach(testSrc ${TEST_SRCS})
         set(EXTRA_SOURCES ${testName}_SOURCES)
         set(EXTRA_SOURCES ${${EXTRA_SOURCES}})
 
-        add_executable(${testName} ${testSrc} ${CMAKE_ROOT_SRC_EVENT_DIR}/${sourceFileName}.cpp ${EXTRA_SOURCES})
+        add_executable(${testName} 
+                ${testSrc} 
+                ${CMAKE_ROOT_SRC_EVENT_DIR}/${sourceFileName}.cpp 
+                ${COMMON_TEST_SOURCES} 
+                ${EXTRA_SOURCES})
         target_link_libraries(${testName} GTest::gmock GTest::gmock_main GTest::gtest GTest::gtest_main mocklib)
         gtest_discover_tests(${testName})
     endif()
