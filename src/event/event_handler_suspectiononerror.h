@@ -27,6 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class EventHandlerSuspectionOnError : public EventHandler
 {
+protected:
+    virtual event_type_t handleNormalMovement(event_data_t *eventData);
+    virtual event_type_t handleErrorneosMovement(event_data_t *eventData);
+
 public:
     EventHandlerSuspectionOnError(){};
     event_type_t handle(event_data_t *);

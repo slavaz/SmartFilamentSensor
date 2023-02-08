@@ -39,7 +39,7 @@ private:
 public:
     virtual void init(const uint);
     virtual void heartbeat();
-    bool hasEnded();
+    virtual bool hasEnded();
 };
 
 /*** global variables defined in .c file *********************************************************/

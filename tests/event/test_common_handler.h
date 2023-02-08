@@ -26,13 +26,14 @@ using ::testing::StrictMock;
 
 MATCHER_P(isArgEqual, expected, std::string(negation ? "is" : "isn't") + " match " + std::to_string(expected))
 {
-    return arg == expected;
+    return (uintptr_t)arg == (uintptr_t)expected;
 };
 
 class MockTimer : public Timer
 {
 public:
     MOCK_METHOD(void, init, (const uint), (override));
+    MOCK_METHOD(bool, hasEnded, (), (override));
 };
 
 class MockSensorManagement : public SensorManagement

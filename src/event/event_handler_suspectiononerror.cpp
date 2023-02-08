@@ -34,6 +34,38 @@ EventHandlerSuspectionOnError EventHandlerSuspectionOnError::defaultObject;
 /*** file scope functions ************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
 
+event_type_t
+EventHandlerSuspectionOnError::handleNormalMovement(event_data_t *eventData)
+{
+    if (EVENT_MOVEMENT_FILAMENT_AND_ENGINE == eventData->movementState)
+    {
+        if (eventData->engineSensor->hasFastMovement())
+        {
+            puts("Started EVENT_RETRACTION after EVENT_SUSPECTION_ON_ERROR");
+            return EVENT_RETRACTION;
+        }
+        puts("Started EVENT_MOVING after EVENT_SUSPECTION_ON_ERROR");
+        return EVENT_MOVING;
+    }
+    puts("Started EVENT_NONE after EVENT_SUSPECTION_ON_ERROR");
+    return EVENT_NONE;
+}
+
+/* --------------------------------------------------------------------------------------------- */
+
+event_type_t
+EventHandlerSuspectionOnError::handleErrorneosMovement(event_data_t *eventData)
+{
+    if (eventData->timer->hasEnded())
+    {
+        eventData->alarmState = ALARM_STATE_ON;
+        eventData->timer->init(ERROR_WAIT_MILLISEC);
+        puts("!!! OPS !!! Started EVENT_WAITING_IN_ERROR after EVENT_SUSPECTION_ON_ERROR");
+        return EVENT_WAITING_IN_ERROR;
+    }
+    return EVENT_SUSPECTION_ON_ERROR;
+}
+
 /* --------------------------------------------------------------------------------------------- */
 /*** public functions ****************************************************************************/
 /* --------------------------------------------------------------------------------------------- */
@@ -43,28 +75,10 @@ EventHandlerSuspectionOnError::handle(event_data_t *eventData)
 {
     if (EVENT_MOVEMENT_ONLY_ENGINE != eventData->movementState)
     {
-        if (EVENT_MOVEMENT_FILAMENT_AND_ENGINE == eventData->movementState)
-        {
-            if (eventData->engineSensor->hasFastMovement())
-            {
-                puts("Started EVENT_RETRACTION after EVENT_SUSPECTION_ON_ERROR");
-                return EVENT_RETRACTION;
-            }
-            puts("Started EVENT_MOVING after EVENT_SUSPECTION_ON_ERROR");
-            return EVENT_MOVING;
-        }
-        puts("Started EVENT_NONE after EVENT_SUSPECTION_ON_ERROR");
-        return EVENT_NONE;
+        return this->handleNormalMovement(eventData);
     }
 
-    if (eventData->timer->hasEnded())
-    {
-        eventData->alarmState = ALARM_STATE_ON;
-        eventData->timer->init(ERROR_WAIT_MILLISEC);
-        puts("!!! OPS !!! Started EVENT_WAITING_IN_ERROR after EVENT_SUSPECTION_ON_ERROR");
-        return EVENT_WAITING_IN_ERROR;
-    }
-    return EVENT_SUSPECTION_ON_ERROR;
+    return this->handleErrorneosMovement(eventData);
 }
 
 /* --------------------------------------------------------------------------------------------- */
