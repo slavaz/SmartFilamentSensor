@@ -1,4 +1,4 @@
-It's good t see you here at the page as it means, you have posible interest in contributing to the project... but probably not, who knows.
+It's good to see you here at the page as it means, you have posible interest in contributing to the project... but probably not, who knows.
 Anyway, at the page you may find instructions how to set up build environment for the project.
 
 Raspberry Pi Pico SDK
