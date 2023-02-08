@@ -66,7 +66,7 @@ Connect all elements regarding to the scheme:
 
 Flashing firmware
 ---
-Connect RP2040Zero to your PC via USB cable. Press 'RESET' button on the plate, don't release the button and press 'BOOT' button so you should have two buttons pressed. Release 'RESET' button and next release 'BOOT' button. f you did everything correctly, your RP2040Zero will be visible for your PC as an USN flash drive. Copy firmware bin-file to the 'usb stick'. After it, the drive will be disconnected and firmware successfully flashed to the plate.
+Connect RP2040Zero to your PC via USB cable. Press 'RESET' button on the plate, don't release the button and press 'BOOT' button so you should have two buttons pressed. Release 'RESET' button and next release 'BOOT' button. f you did everything correctly, your RP2040Zero will be visible for your PC as an USB flash drive. Copy firmware bin-file to the 'usb stick'. After it, the drive will be disconnected and firmware successfully flashed to the plate.
 
 Final steps
 ---
