@@ -1,7 +1,7 @@
 About
 ===
 
-The Smart Filament Sensor it's just my attempt to implement fully backward compatible sensor with my 'Creality CR10 Smart' 3D printer. I know about existing smart sensors, but almost all of these sensors require flashing by own-compiled firmware with changing sensor settings. My sensor is ully compatible with stock filament sensor and doesn't require any own-compiled firmwares (but you may use the firmwares as well and without any restrictions).
+The Smart Filament Sensor it's just my attempt to implement fully backward compatible sensor with my 'Creality CR10 Smart' 3D printer. I know about existing smart sensors, but almost all of these sensors require flashing by own-compiled firmware with changing sensor settings. My sensor is fully compatible with stock filament sensor and doesn't require any own-compiled firmwares (but you may use the firmwares as well, and without any restrictions).
 
 Main idea
 ---
@@ -10,9 +10,10 @@ So, there is a stock sensor for my printer:
 
 ![Stock sensor](img/001.StockSensor.png)
 
-The sensor is very simple: has just a microswitch inside and has only one function: to alarm if the microswitch isn't pressed  by a filament. Frankly speaking, the sensor has a optical sensor with some small circuit inside, but it implemented like a simple and stupid micriswitch. In general, it's okay, but there are few cases when it isn't enough:
+The sensor is very simple: has just a microswitch inside and has only one function: to alarm if the microswitch isn't pressed  by a filament. To be honest, the sensor has a optical sensor with some small circuit inside, but it implemented like a simple and stupid micriswitch. In general, it's okay, but there are few cases when it isn't enough:
 
-- The filament may stuck for some reasons. Eg. it may be get tangled in a coil before a sensor or it may be deformed and jammed by feed gear in extruder due to a lot of retractions in small amount of time.
+- The filament may stuck for some reasons. Eg. it may be get tangled in a coil before a sensor or it may be deformed and jammed by feed gear in extruder due to a lot of retractions in small amount of time. In this case the printer continues to print 'in air'. Probably, after some time filament may be  continued to move again  and you will see a lot of 'scary plastic hairs' instead of nice and well-printed model...
+
 - A diameter of the filament may be unstable (especially for self-made filaments like in my case). Or the filament may be severely bent or dented. In this case  microswitch may be switched off due to insufficient filament pressure on the lever and your 3D-printer may think that filament ended, and the printer stucks until you pass 'Changing filement' ceremony. 
 
 So for detecting not only 'filament ended' events, need to recognize only one case: extruder works but filament doesn't move. This case covers all what I need, include 'filament ended' event. And my Smart Filament Sensor recognizes exactly this case.
