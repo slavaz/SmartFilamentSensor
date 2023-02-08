@@ -12,6 +12,10 @@ set(CMAKE_ROOT_SRC_EVENT_DIR ${CMAKE_ROOT_SRC_DIR}/event)
 
 include_directories (${CMAKE_TEST_ROOT_DIR}/mocklib ${CMAKE_ROOT_SRC_DIR})
 
+set (event_handler_moving__test_SOURCES ${CMAKE_ROOT_SRC_DIR}/timer.cpp)
+
+
+
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *__test.cpp)
 
 foreach(testSrc ${TEST_SRCS})

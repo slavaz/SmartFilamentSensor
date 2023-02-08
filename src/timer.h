@@ -37,7 +37,7 @@ private:
     absolute_time_t currentTime;
 
 public:
-    void init(const uint);
+    virtual void init(const uint);
     virtual void heartbeat();
     bool hasEnded();
 };
