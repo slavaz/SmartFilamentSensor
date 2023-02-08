@@ -31,3 +31,17 @@ Put the bearing into the wheel suport:
 
 ![Wheel And Support](img/109.WheelAndSupport.png)
 
+Put one of sensors into main body:
+
+![Sensor And Main Body](img/110.SensorAndBase.png)
+
+Put a wheel with support into main body:
+
+![Sensor And Main Body](img/111.SupportAndBase.png)
+
+Connect wheel support and main body via rubber ring and wires... well, I don't know how I may draw it, so there is a photo of my sensor:
+
+![Sensor And Main Body With Rubber](img/112.SupportAndBaseRubber.png)
+
+As you can see, the rubber is stretched and fixed by twisted wires on the support and the body through the holes. Of course, you may use a spring if you have appropriate size, but I don't have one, so  I use a rubber ring and disposable packing wire (peeled of any plastic sheath).
+
