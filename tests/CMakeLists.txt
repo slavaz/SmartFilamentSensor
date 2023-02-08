@@ -5,6 +5,7 @@ project(SmartFilamentSensor_tests
 )
 
 add_subdirectory(mocklib)
+add_subdirectory(event)
 
 enable_testing()
 find_package(GTest REQUIRED)
@@ -35,6 +36,7 @@ set (events_handler__test_SOURCES
     ${CMAKE_ROOT_SRC_DIR}/timer.cpp 
     ${EVENT_HANDLERS_SRC}
 )
+
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *__test.cpp)
 
 foreach(testSrc ${TEST_SRCS})
