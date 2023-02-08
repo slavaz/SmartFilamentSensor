@@ -41,6 +41,7 @@ class MockSensorManagement : public SensorManagement
 public:
     MOCK_METHOD(void, calculateAverageInterval, (), (override));
     MOCK_METHOD(bool, hasFastMovement, (), (override));
+    MOCK_METHOD(void, reset, (), (override));
 };
 
 template <class T = EventHandler>

@@ -16,7 +16,7 @@ set(COMMON_TEST_SOURCES
         ${CMAKE_ROOT_SRC_DIR}/sensor_management.cpp   
         ${CMAKE_ROOT_SRC_DIR}/timer.cpp)
 
-file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *__test.cpp)
+    file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *__test.cpp)
 
 foreach(testSrc ${TEST_SRCS})
     get_filename_component(testName ${testSrc} NAME_WE)

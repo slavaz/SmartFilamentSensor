@@ -49,7 +49,7 @@ public:
     virtual void heartbeat();
     virtual void calculateAverageInterval();
 
-    void reset();
+    virtual void reset();
 
     virtual bool moved();
 
