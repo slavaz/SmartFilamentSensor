@@ -41,12 +41,25 @@ EventHandlerMoving EventHandlerMoving::defaultObject;
 event_type_t
 EventHandlerMoving::handle(event_data_t *eventData)
 {
-    if (EVENT_MOVEMENT_STOP == eventData->movementState)
+    switch (eventData->movementState)
     {
-        return EVENT_NONE;
+    case EVENT_MOVEMENT_ONLY_ENGINE:
+        eventData->timer->init(ERROR_TOLERANCE_MILLISEC);
+        puts("!!! Started EVENT_SUSPECTION_ON_ERROR after EVENT_MOVING(EVENT_MOVEMENT_ONLY_ENGINE)");
+        return EVENT_SUSPECTION_ON_ERROR;
+    case EVENT_MOVEMENT_ONLY_FILAMENT:
+        puts("Started EVENT_MANUAL_FEED after EVENT_MOVING");
+        return EVENT_MANUAL_FEED;
+    case EVENT_MOVEMENT_FILAMENT_AND_ENGINE:
+        if (eventData->engineSensor->hasFastMovement())
+        {
+            puts("Started EVENT_RETRACTION after EVENT_MOVING");
+            return EVENT_RETRACTION;
+        }
+        eventData->filamentSensor->calculateAverageInterval();
+        eventData->engineSensor->calculateAverageInterval();
+        return EVENT_MOVING;
     }
-    puts("Started EVENT_WAIT_BEFORE_MOVING after EVENT_NONE");
-    eventData->timer->init(WAIT_BEFORE_MOVING_MILLISEC);
-
-    return EVENT_WAIT_BEFORE_MOVING;
+    puts("Started EVENT_NONE after EVENT_MOVING");
+    return EVENT_NONE;
 }

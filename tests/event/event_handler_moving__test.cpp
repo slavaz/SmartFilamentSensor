@@ -21,17 +21,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "event/event_handler_moving.h"
 
+using ::testing::Return;
+using ::testing::StrictMock;
+
 class MockTimer : public Timer
 {
 public:
     MOCK_METHOD(void, init, (const uint), (override));
 };
 
-class EventHandlerMovingTests : public ::testing::TestWithParam<std::tuple<int, int, event_movement_state_t, event_type_t>>
+class MockSensorManagement : public SensorManagement
+{
+public:
+    MOCK_METHOD(void, calculateAverageInterval, (), (override));
+    MOCK_METHOD(bool, hasFastMovement, (), (override));
+};
+class EventHandlerMovingTests : public ::testing::TestWithParam<std::tuple<int, int, event_movement_state_t, event_type_t, int, bool, int>>
 {
 protected:
     event_data_t eventData;
-    MockTimer timer;
+    StrictMock<MockTimer> timer;
+    StrictMock<MockSensorManagement> filamentSensor, engineSensor;
 
     EventHandlerMoving handler;
 };
@@ -46,23 +56,35 @@ TEST_P(EventHandlerMovingTests, handle)
     auto [timerCalls,
           timerExpectedParamValue,
           movementState,
-          expectedResult] = GetParam();
+          expectedResult,
+          countCallsHasFastMovement,
+          retValHasFastMovement,
+          countCallsCalculateAverageInterval] = GetParam();
 
     eventData.timer = &timer;
+    eventData.filamentSensor = &filamentSensor;
+    eventData.engineSensor = &engineSensor;
+
     eventData.movementState = movementState;
 
     EXPECT_CALL(timer, init(isArgEqual(timerExpectedParamValue))).Times(timerCalls);
+    EXPECT_CALL(engineSensor, hasFastMovement).Times(countCallsHasFastMovement).WillOnce(Return(retValHasFastMovement));
+
+    EXPECT_CALL(engineSensor, calculateAverageInterval).Times(countCallsCalculateAverageInterval);
+    EXPECT_CALL(filamentSensor, calculateAverageInterval).Times(countCallsCalculateAverageInterval);
 
     event_type_t actualResult = handler.handle(&eventData);
     EXPECT_EQ(expectedResult, actualResult);
 }
 
-// timerCalls, timerExpectedParamValue, movementState, expectedResult
+// timerCalls, timerExpectedParamValue, movementState, expectedResult, countCallsHasFastMovement, retValHasFastMovement,
+// countCallsCalculateAverageInterval
 INSTANTIATE_TEST_CASE_P(
     EventHandlerMoving,
     EventHandlerMovingTests,
     ::testing::Values(
-        std::make_tuple(0, 0, EVENT_MOVEMENT_STOP, EVENT_NONE),
-        std::make_tuple(1, 300, EVENT_MOVEMENT_ONLY_FILAMENT, EVENT_WAIT_BEFORE_MOVING),
-        std::make_tuple(1, 300, EVENT_MOVEMENT_ONLY_ENGINE, EVENT_WAIT_BEFORE_MOVING),
-        std::make_tuple(1, 300, EVENT_MOVEMENT_FILAMENT_AND_ENGINE, EVENT_WAIT_BEFORE_MOVING)));
+        std::make_tuple(0, 0, EVENT_MOVEMENT_STOP, EVENT_NONE, 0, false, 0),
+        std::make_tuple(0, 0, EVENT_MOVEMENT_ONLY_FILAMENT, EVENT_MANUAL_FEED, 0, false, 0),
+        std::make_tuple(1, 500, EVENT_MOVEMENT_ONLY_ENGINE, EVENT_SUSPECTION_ON_ERROR, 0, false, 0),
+        std::make_tuple(0, 0, EVENT_MOVEMENT_FILAMENT_AND_ENGINE, EVENT_MOVING, 1, false, 1),
+        std::make_tuple(0, 0, EVENT_MOVEMENT_FILAMENT_AND_ENGINE, EVENT_RETRACTION, 1, true, 0)));

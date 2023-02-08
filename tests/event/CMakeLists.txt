@@ -12,7 +12,12 @@ set(CMAKE_ROOT_SRC_EVENT_DIR ${CMAKE_ROOT_SRC_DIR}/event)
 
 include_directories (${CMAKE_TEST_ROOT_DIR}/mocklib ${CMAKE_ROOT_SRC_DIR})
 
-set (event_handler_moving__test_SOURCES ${CMAKE_ROOT_SRC_DIR}/timer.cpp)
+
+set (event_handler_none__test_SOURCES ${CMAKE_ROOT_SRC_DIR}/timer.cpp)
+
+set (event_handler_moving__test_SOURCES 
+        ${CMAKE_ROOT_SRC_DIR}/sensor_management.cpp   
+        ${CMAKE_ROOT_SRC_DIR}/timer.cpp)
 
 
 
