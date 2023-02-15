@@ -1,3 +1,5 @@
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/slavaz/SmartFilamentSensor/ci.yml)
+
 Smart Filament Sensor
 ===
 

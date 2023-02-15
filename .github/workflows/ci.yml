@@ -1,0 +1,28 @@
+name: CI
+on:
+  push:
+    branches: []
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PICO_SDK_PATH: "/opt/pico_sdk"
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake build-essential gcc-arm-none-eabi git freecad googletest google-mock  libgtest-dev libgmock-dev
+    - name: Prepare PICO-SDK
+      run: |
+        sudo git clone --depth 1 https://github.com/raspberrypi/pico-sdk $PICO_SDK_PATH && \
+        pushd $PICO_SDK_PATH && \
+        sudo git submodule update --init && \
+        popd
+    - name: Configure build
+      run: cmake -B build -S .
+    - name: Build firmware
+      run: cmake --build build
+    - name: Run tests
+      run: ctest --test-dir build/tests --output-on-failure

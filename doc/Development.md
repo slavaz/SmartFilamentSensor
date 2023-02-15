@@ -24,7 +24,7 @@ Other tools
 You also need to install GoogleTest and Freecad.
 
 deb-based distros:
-`sudo apt install googletest google-mock freecad`
+`sudo apt install googletest google-mock libgtest-dev libgmock-dev freecad`
 
 RPM-based distros:
 
