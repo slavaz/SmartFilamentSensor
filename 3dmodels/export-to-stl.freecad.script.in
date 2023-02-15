@@ -1,12 +1,13 @@
 import Mesh, Part
 import MeshPart
 
-documentName="@FREECAD_DOCUMENT_NAME@"
+documentName='@FreeCadObject@'
+sourceDir='@CMAKE_CURRENT_LIST_DIR@'
+outputDir='@CMAKE_CURRENT_BINARY_DIR@'
 
-FreeCAD.openDocument("@CMAKE_CURRENT_LIST_DIR@/"+documentName+".FCStd")
+FreeCAD.openDocument(sourceDir + '/' + documentName + ".FCStd")
 App.setActiveDocument(documentName)
 activeDocument=App.getDocument(documentName)
-
 
 def importObjectToStl(activeDocument, objectLabel):
     meshObject=activeDocument.addObject("Mesh::Feature","Mesh")
@@ -14,16 +15,13 @@ def importObjectToStl(activeDocument, objectLabel):
     shapeObject=Part.getShape(partObject,"")
     meshObject.Mesh=MeshPart.meshFromShape(Shape=shapeObject, LinearDeflection=0.01, AngularDeflection=0.0872665, Relative=False)
     meshObject.Label="MainBody (Meshed)"
-    del meshObject, partObject, shapeObject
+    del partObject, shapeObject
     objectsToExport=[]
-    objectsToExport.append(activeDocument.getObject("Mesh001"))
-    Mesh.export(objectsToExport, documentName+"-"+objectLabel+".stl")
-    del objectsToExport
-    activeDocument.removeObject('Mesh001')
+    objectsToExport.append(meshObject)
+    Mesh.export(objectsToExport, outputDir + '/' + objectLabel + ".stl")
+    activeDocument.removeObject('Mesh')
+    del objectsToExport, meshObject
 
-
-for objectLabel in [@FREECAD_OBJECT_NAMES_TEXT@]:
-    importObjectToStl(activeDocument, objectLabel)
-
+importObjectToStl(activeDocument,  documentName)
 
 del activeDocument

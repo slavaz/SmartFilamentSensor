@@ -1,34 +1,30 @@
-set (FREECAD_DOCUMENT_NAME  "SmartFilamentSensor_withBearing")
-set (FREECAD_OBJECT_NAMES "MainBody" "FilamentWheel" "FilamentWheelSupport" "EngineShaftWheel" "EngineSensorBody")
+set (FREECAD_OBJECT_NAMES "BearingSupport" "EngineMainBody" "EngineShaftWheel" "FilamentWheel" "MainBody")
 
+foreach(FreeCadObject ${FREECAD_OBJECT_NAMES})
 
-set(FREECAD_OBJECT_NAMES_TEXT ${FREECAD_OBJECT_NAMES})
-list(TRANSFORM FREECAD_OBJECT_NAMES_TEXT APPEND "\"")
-list(TRANSFORM FREECAD_OBJECT_NAMES_TEXT PREPEND "\"")
-list(JOIN FREECAD_OBJECT_NAMES_TEXT , FREECAD_OBJECT_NAMES_TEXT)
+    configure_file(${PROJECT_SOURCE_DIR}/3dmodels/export-to-stl.freecad.script.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${FreeCadObject}.freecad.script)
 
-set(STL_FILE_NAMES ${FREECAD_OBJECT_NAMES})
-list(TRANSFORM STL_FILE_NAMES PREPEND "${CMAKE_CURRENT_BINARY_DIR}/${FREECAD_DOCUMENT_NAME}-")
-list(TRANSFORM STL_FILE_NAMES APPEND ".stl")
+    add_custom_target(generate_${FreeCadObject}.stl
+        ALL
+        DEPENDS
+            ${FreeCadObject}.stl
+            ${PROJECT_SOURCE_DIR}/3dmodels/export-to-stl.freecad.script.in
+            ${CMAKE_CURRENT_BINARY_DIR}/${FreeCadObject}.freecad.script
+            ${CMAKE_CURRENT_LIST_DIR}/${FreeCadObject}.FCStd
+        COMMENT "Generating '${FreeCadObject}' STL file"
+      )
 
-configure_file(${PROJECT_SOURCE_DIR}/3dmodels/export-to-stl.freecad.script.in
-    ${CMAKE_CURRENT_BINARY_DIR}/export-to-stl.freecad.script
-)
-unset(FREECAD_OBJECT_NAMES_TEXT)
+      add_custom_command(
+        COMMAND ${FREECAD_EXECUTABLE} < ${CMAKE_CURRENT_BINARY_DIR}/${FreeCadObject}.freecad.script
+        DEPENDS 
+            ${CMAKE_CURRENT_BINARY_DIR}/${FreeCadObject}.freecad.script
+            ${CMAKE_CURRENT_LIST_DIR}/${FreeCadObject}.FCStd
+        OUTPUT  ${FreeCadObject}.stl
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Running FreeCAD for generate ${FreeCadObject}.stl"
+    )
 
-add_custom_target(generate_stls
-    ALL
-    DEPENDS ${STL_FILE_NAMES} ${CMAKE_CURRENT_BINARY_DIR}/export-to-stl.freecad.script ${CMAKE_CURRENT_LIST_DIR}/${FREECAD_DOCUMENT_NAME}.FCStd
-    COMMENT "Generating STL files"
-  )
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${FreeCadObject}.stl DESTINATION 3d-models)
 
-  add_custom_command(
-    COMMAND ${FREECAD_EXECUTABLE} < ${CMAKE_CURRENT_BINARY_DIR}/export-to-stl.freecad.script
-    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/${FREECAD_DOCUMENT_NAME}.FCStd ${CMAKE_CURRENT_BINARY_DIR}/export-to-stl.freecad.script
-    OUTPUT ${STL_FILE_NAMES}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Running FreeCAD"
-)
-install(FILES ${STL_FILE_NAMES} DESTINATION stls)
-
-unset(STL_FILE_NAMES)
+endforeach(FreeCadObject)

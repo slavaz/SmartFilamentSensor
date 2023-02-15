@@ -1,12 +1,9 @@
 
-find_file (FREECAD_EXECUTABLE NAMES FreeCADCmd)
+find_file (FREECAD_EXECUTABLE NAMES FreeCADCmd freecad.cmd)
 
-if (NOT EXISTS ${FREECAD_EXECUTABLE})
-    find_file (FREECAD_EXECUTABLE NAMES freecad.cmd)
+if (EXISTS ${FREECAD_EXECUTABLE})
+    add_subdirectory(CrealityCR10Smart_DualGearExtruder)
+else()
+    message( WARNING "FreeCAD not found! STL files will not be generated. Please install FreeCAD")
 endif()
 
-if (NOT EXISTS ${FREECAD_EXECUTABLE})
-    message( FATAL_ERROR "FreeCAD not found!" )
-endif()
-
-add_subdirectory(CrealityCR10Smart_DualGearExtruder)
