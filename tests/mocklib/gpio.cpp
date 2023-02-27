@@ -17,46 +17,35 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "hardware/gpio.h"
-
-#include "mock_gpio.h"
-
-MockGpio mockGpio;
+#include "mocklib.h"
 
 void gpio_init(uint gpio)
 {
-    mockGpio.methodWasCalled(MockGpioMethod__gpio_init);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_init__gpio, gpio);
+    mockPicoSdkApi.mockPicoSdk->gpio_init(gpio);
 }
 
 bool gpio_get(uint gpio)
 {
-    mockGpio.methodWasCalled(MockGpioMethod__gpio_get);
-    return mockGpio.getMethodReturnValue(MockGpioMethod__gpio_get);
+    return mockPicoSdkApi.mockPicoSdk->gpio_get(gpio);
 }
 
 void gpio_set_dir(uint gpio, bool out)
 {
-    mockGpio.methodWasCalled(MockGpioMethod__gpio_set_dir);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_dir__gpio, gpio);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_dir__out, out);
+    mockPicoSdkApi.mockPicoSdk->gpio_set_dir(gpio, out);
 }
 
 void gpio_pull_down(uint gpio)
 {
-    mockGpio.methodWasCalled(MockGpioMethod__gpio_pull_down);
+    mockPicoSdkApi.mockPicoSdk->gpio_pull_down(gpio);
 }
 
 void gpio_set_slew_rate(uint gpio, enum gpio_slew_rate slew)
 {
-    mockGpio.methodWasCalled(MockGpioMethod__gpio_set_slew_rate);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_slew_rate__gpio, gpio);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_set_slew_rate__slew, slew);
+
+    mockPicoSdkApi.mockPicoSdk->gpio_set_slew_rate(gpio, slew);
 }
 
 void gpio_put(uint gpio, bool value)
 {
-    mockGpio.methodWasCalled(MockGpioMethod__gpio_put);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_put__gpio, gpio);
-    mockGpio.setParameter(MockGpioMethodParameter__gpio_put__value, value);
+    mockPicoSdkApi.mockPicoSdk->gpio_put(gpio, value);
 }

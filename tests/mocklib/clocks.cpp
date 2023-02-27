@@ -17,16 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "hardware/clocks.h"
+#include "mocklib.h"
 
-#include "mock_clocks.h"
-
-MockClocks mockClocks;
-
-uint32_t
-clock_get_hz(enum clock_index clk_index)
+uint32_t clock_get_hz(enum clock_index clk_index)
 {
-    mockClocks.methodWasCalled(MockClocksMethod__clock_get_hz);
-    mockClocks.setParameter(MockClocksMethodParameter__clock_get_hz__clk_index, clk_index);
-
-    return mockClocks.getMethodReturnValue(MockClocksMethod__clock_get_hz);
+    return mockPicoSdkApi.mockPicoSdk->clock_get_hz(clk_index);
 }

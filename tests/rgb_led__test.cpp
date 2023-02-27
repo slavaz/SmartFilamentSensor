@@ -17,190 +17,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <gtest/gtest.h>
-#include "mock_pio.h"
-#include "mock_clocks.h"
+#include "mocklib.h"
 #include "rgb_led.h"
 #include "hardware/clocks.h"
 
+using ::testing::_;
+using ::testing::DoAll;
+using ::testing::Eq;
+using ::testing::Return;
+using ::testing::SaveArg;
+using ::testing::SaveArgPointee;
+
 #define TEST_PIN_NUMBER 123
-#define TEST_PIO 456
+#define TEST_PIO (pio_hw_t *)456
 #define TEST_OFFSET 789
 
-TEST(RgbLed, init__pio_add_program)
+MATCHER_P(SameAs, value, ::testing::PrintToString(*value))
 {
-    RgbLed rgbLed;
-
-    mockPio.reset();
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__pio_add_program));
-
-    EXPECT_EQ(TEST_PIO, mockPio.getParameter(MockPioMethodParameter__pio_add_program__pio));
-
-    const struct pio_program *fetched_arg_program =
-        (struct pio_program *)mockPio.getParameter(MockPioMethodParameter__pio_add_program__program);
-
-    EXPECT_EQ(4, fetched_arg_program->length);
-    EXPECT_EQ(-1, fetched_arg_program->origin);
-    EXPECT_EQ(0x6221, fetched_arg_program->instructions[0]);
-    EXPECT_EQ(0x1123, fetched_arg_program->instructions[1]);
-    EXPECT_EQ(0x1400, fetched_arg_program->instructions[2]);
-    EXPECT_EQ(0xa442, fetched_arg_program->instructions[3]);
-}
-
-TEST(RgbLed, init__pio_gpio_init)
-{
-    RgbLed rgbLed;
-
-    mockPio.reset();
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__pio_gpio_init));
-    EXPECT_EQ(TEST_PIN_NUMBER, mockPio.getParameter(MockPioMethodParameter__pio_gpio_init__pin));
-    EXPECT_EQ(TEST_PIO, mockPio.getParameter(MockPioMethodParameter__pio_gpio_init__pio));
-}
-
-TEST(RgbLed, init__pio_sm_set_consecutive_pindirs)
-{
-    RgbLed rgbLed;
-
-    mockPio.reset();
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__pio_sm_set_consecutive_pindirs));
-    EXPECT_EQ(TEST_PIO, mockPio.getParameter(MockPioMethodParameter__pio_sm_set_consecutive_pindirs__pio));
-    EXPECT_EQ(0, mockPio.getParameter(MockPioMethodParameter__pio_sm_set_consecutive_pindirs__sm));
-    EXPECT_EQ(TEST_PIN_NUMBER, mockPio.getParameter(MockPioMethodParameter__pio_sm_set_consecutive_pindirs__pin_base));
-    EXPECT_EQ(1, mockPio.getParameter(MockPioMethodParameter__pio_sm_set_consecutive_pindirs__pin_count));
-    EXPECT_EQ(true, mockPio.getParameter(MockPioMethodParameter__pio_sm_set_consecutive_pindirs__is_out));
-}
-
-TEST(RgbLed, init__lowlevel_getConfig)
-{
-    RgbLed rgbLed;
-
-    mockPio.reset();
-    mockPio.setMethodReturnValue(MockPioMethod__pio_add_program, TEST_OFFSET);
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__pio_get_default_sm_config));
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__sm_config_set_wrap));
-    EXPECT_EQ(TEST_OFFSET, mockPio.getParameter(MockPioMethodParameter__sm_config_set_wrap__target));
-    EXPECT_EQ(TEST_OFFSET + 3, mockPio.getParameter(MockPioMethodParameter__sm_config_set_wrap__wrap));
-
-    uintptr_t config = mockPio.getParameter(MockPioMethodParameter__sm_config_set_wrap__c);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__sm_config_set_sideset));
-    EXPECT_EQ(config, mockPio.getParameter(MockPioMethodParameter__sm_config_set_sideset__c));
-    EXPECT_EQ(1, mockPio.getParameter(MockPioMethodParameter__sm_config_set_sideset__bit_count));
-    EXPECT_EQ(false, mockPio.getParameter(MockPioMethodParameter__sm_config_set_sideset__optional));
-    EXPECT_EQ(false, mockPio.getParameter(MockPioMethodParameter__sm_config_set_sideset__pindirs));
-}
-
-TEST(RgbLed, init__sm_config_set_sideset_pins)
-{
-    RgbLed rgbLed;
-
-    mockPio.reset();
-    mockPio.setMethodReturnValue(MockPioMethod__pio_add_program, TEST_OFFSET);
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__sm_config_set_sideset_pins));
-    EXPECT_EQ(TEST_PIN_NUMBER, mockPio.getParameter(MockPioMethodParameter__sm_config_set_sideset_pins__sideset_base));
-}
-
-TEST(RgbLed, init__sm_config_set_out_shift)
-{
-    RgbLed rgbLed;
-
-    mockPio.reset();
-    mockPio.setMethodReturnValue(MockPioMethod__pio_add_program, TEST_OFFSET);
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    uintptr_t config = mockPio.getParameter(MockPioMethodParameter__sm_config_set_sideset_pins__c);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__sm_config_set_out_shift));
-    EXPECT_EQ(config, mockPio.getParameter(MockPioMethodParameter__sm_config_set_out_shift__c));
-    EXPECT_EQ(false, mockPio.getParameter(MockPioMethodParameter__sm_config_set_out_shift__shift_right));
-    EXPECT_EQ(true, mockPio.getParameter(MockPioMethodParameter__sm_config_set_out_shift__autopull));
-    EXPECT_EQ(32, mockPio.getParameter(MockPioMethodParameter__sm_config_set_out_shift__pull_threshold));
-}
-
-TEST(RgbLed, init__sm_config_set_fifo_join)
-{
-    RgbLed rgbLed;
-
-    mockPio.reset();
-    mockPio.setMethodReturnValue(MockPioMethod__pio_add_program, TEST_OFFSET);
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    uintptr_t config = mockPio.getParameter(MockPioMethodParameter__sm_config_set_sideset_pins__c);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__sm_config_set_fifo_join));
-    EXPECT_EQ(config, mockPio.getParameter(MockPioMethodParameter__sm_config_set_fifo_join__c));
-    EXPECT_EQ(PIO_FIFO_JOIN_TX, mockPio.getParameter(MockPioMethodParameter__sm_config_set_fifo_join__join));
-}
-
-TEST(RgbLed, init__lowlevel_setClockdiv)
-{
-    RgbLed rgbLed;
-
-    mockPio.reset();
-    mockClocks.reset();
-
-    mockPio.setMethodReturnValue(MockPioMethod__pio_add_program, TEST_OFFSET);
-    mockClocks.setMethodReturnValue(MockClocksMethod__clock_get_hz, 24000000);
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    uintptr_t config = mockPio.getParameter(MockPioMethodParameter__sm_config_set_sideset_pins__c);
-
-    EXPECT_EQ(1, mockClocks.getCountMethodCalls(MockClocksMethod__clock_get_hz));
-    EXPECT_EQ(clk_sys, mockClocks.getParameter(MockClocksMethodParameter__clock_get_hz__clk_index));
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__sm_config_set_clkdiv));
-    EXPECT_EQ(config, mockPio.getParameter(MockPioMethodParameter__sm_config_set_clkdiv__c));
-    EXPECT_EQ(3, mockPio.getParameter(MockPioMethodParameter__sm_config_set_clkdiv__div));
-}
-
-TEST(RgbLed, init__pio_sm_init)
-{
-    RgbLed rgbLed;
-
-    mockPio.reset();
-    mockPio.setMethodReturnValue(MockPioMethod__pio_add_program, TEST_OFFSET);
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    uintptr_t config = mockPio.getParameter(MockPioMethodParameter__sm_config_set_sideset_pins__c);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__pio_sm_init));
-    EXPECT_EQ(TEST_PIO, mockPio.getParameter(MockPioMethodParameter__pio_sm_init__pio));
-    EXPECT_EQ(0, mockPio.getParameter(MockPioMethodParameter__pio_sm_init__sm));
-    EXPECT_EQ(TEST_OFFSET, mockPio.getParameter(MockPioMethodParameter__pio_sm_init__initial_pc));
-    EXPECT_EQ(config, mockPio.getParameter(MockPioMethodParameter__pio_sm_init__config));
-}
-
-TEST(RgbLed, init__pio_sm_set_enabled)
-{
-    RgbLed rgbLed;
-
-    mockPio.reset();
-    mockPio.setMethodReturnValue(MockPioMethod__pio_add_program, TEST_OFFSET);
-
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
-
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__pio_sm_set_enabled));
-    EXPECT_EQ(TEST_PIO, mockPio.getParameter(MockPioMethodParameter__pio_sm_set_enabled__pio));
-    EXPECT_EQ(0, mockPio.getParameter(MockPioMethodParameter__pio_sm_set_enabled__sm));
-    EXPECT_EQ(true, mockPio.getParameter(MockPioMethodParameter__pio_sm_set_enabled__enabled));
+    return arg == *value;
 }
 
 class RgbLedSetParametersTests : public ::testing::TestWithParam<std::tuple<rgb_t *, uint>>
@@ -209,20 +43,47 @@ protected:
     RgbLed rgbLed;
 };
 
-TEST_P(RgbLedSetParametersTests, setTime)
+TEST_P(RgbLedSetParametersTests, setColor)
 {
+    MockPicoSdk mockPicoSdk;
+    mockPicoSdkApi.mockPicoSdk = &mockPicoSdk;
+
     auto [color, expectedResult] = GetParam();
+    pio_sm_config config{}, *actualConfig = nullptr;
+    const struct pio_program *fetched_arg_program = nullptr;
+    PIO pio;
     uintptr_t actualResult;
 
-    mockPio.reset();
+    EXPECT_CALL(mockPicoSdk, pio_add_program(_, _)).Times(1).WillOnce(DoAll(SaveArg<0>(&pio), SaveArg<1>(&fetched_arg_program), Return(TEST_OFFSET)));
 
-    rgbLed.init((const pio_hw_t *)TEST_PIO, TEST_PIN_NUMBER);
+    EXPECT_CALL(mockPicoSdk, pio_gpio_init(Eq(TEST_PIO), Eq(TEST_PIN_NUMBER)));
+    EXPECT_CALL(mockPicoSdk, pio_sm_set_consecutive_pindirs(Eq(TEST_PIO), 0, Eq(TEST_PIN_NUMBER), 1, true));
+    EXPECT_CALL(mockPicoSdk, pio_get_default_sm_config).WillOnce(Return(config));
+    EXPECT_CALL(mockPicoSdk, sm_config_set_wrap(_, Eq(TEST_OFFSET), Eq(TEST_OFFSET + 3))).WillOnce(SaveArg<0>(&actualConfig));
+    EXPECT_CALL(mockPicoSdk, sm_config_set_sideset(SameAs(&actualConfig), 1, false, false));
+    EXPECT_CALL(mockPicoSdk, sm_config_set_sideset_pins(_, TEST_PIN_NUMBER)).WillOnce(SaveArg<0>(&actualConfig));
+    EXPECT_CALL(mockPicoSdk, sm_config_set_out_shift(SameAs(&actualConfig), false, true, 32));
+    EXPECT_CALL(mockPicoSdk, sm_config_set_fifo_join(SameAs(&actualConfig), PIO_FIFO_JOIN_TX));
+    EXPECT_CALL(mockPicoSdk, clock_get_hz(clk_sys)).WillOnce(Return(24000000));
+    EXPECT_CALL(mockPicoSdk, sm_config_set_clkdiv(SameAs(&actualConfig), 3.f));
+    EXPECT_CALL(mockPicoSdk, pio_sm_init(TEST_PIO, 0, TEST_OFFSET, SameAs(&actualConfig)));
+    EXPECT_CALL(mockPicoSdk, pio_sm_set_enabled(TEST_PIO, 0, true));
+
+    rgbLed.init(TEST_PIO, TEST_PIN_NUMBER);
+
+    EXPECT_EQ(TEST_PIO, pio);
+    EXPECT_NE(nullptr, fetched_arg_program);
+    EXPECT_EQ(4, fetched_arg_program->length);
+    EXPECT_EQ(-1, fetched_arg_program->origin);
+    EXPECT_EQ(0x6221, fetched_arg_program->instructions[0]);
+    EXPECT_EQ(0x1123, fetched_arg_program->instructions[1]);
+    EXPECT_EQ(0x1400, fetched_arg_program->instructions[2]);
+    EXPECT_EQ(0xa442, fetched_arg_program->instructions[3]);
+
+    EXPECT_CALL(mockPicoSdk, pio_sm_put_blocking(TEST_PIO, 0, _)).Times(1).WillOnce(SaveArg<2>(&actualResult));
+
     rgbLed.set(color);
 
-    EXPECT_EQ(1, mockPio.getCountMethodCalls(MockPioMethod__pio_sm_put_blocking));
-    EXPECT_EQ(TEST_PIO, mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__pio));
-    EXPECT_EQ(0, mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__sm));
-    actualResult = mockPio.getParameter(MockPioMethodParameter__pio_sm_put_blocking__data);
     EXPECT_EQ(expectedResult, actualResult);
 }
 

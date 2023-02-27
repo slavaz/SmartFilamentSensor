@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "event_controller.h"
 
-using ::testing::AtLeast;
 using ::testing::Return;
 using ::testing::StrictMock;
 

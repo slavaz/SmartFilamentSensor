@@ -16,17 +16,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
-
-#include "mock_time.h"
+#include "mocklib.h"
 
 #include "sensor_management.h"
 #include "movement_sensor.h"
 
 using ::testing::AnyNumber;
 using ::testing::AtLeast;
+using ::testing::Eq;
 using ::testing::Return;
+using ::testing::ReturnPointee;
 
 class TestSensorManagement : public SensorManagement
 {
@@ -64,6 +63,9 @@ protected:
 
 TEST_P(SensorManagementMovedParametersTests, moved)
 {
+    MockPicoSdk mockPicoSdk;
+    mockPicoSdkApi.mockPicoSdk = &mockPicoSdk;
+
     auto [firstTime,
           lastTime,
           readingDelay,
@@ -76,9 +78,16 @@ TEST_P(SensorManagementMovedParametersTests, moved)
 
     MockMovementSensor mockMovementSensor;
 
-    mockTime.reset();
+    if (hasMovement)
+    {
+        EXPECT_CALL(mockPicoSdk, get_absolute_time).Times(3).WillOnce(Return(firstTime)).WillOnce(Return(lastTime)).WillOnce(Return(lastTime));
+    }
+    else
+    {
+        EXPECT_CALL(mockPicoSdk, get_absolute_time).Times(2).WillOnce(Return(firstTime)).WillOnce(Return(lastTime));
+    }
 
-    mockTime.setMethodReturnValue(MockTimeMethod__get_absolute_time, firstTime);
+    EXPECT_CALL(mockPicoSdk, absolute_time_diff_us(Eq(firstTime), Eq(lastTime))).Times(1).WillOnce(Return(lastTime - firstTime));
 
     sensorManagement.init(&mockMovementSensor);
     sensorManagement.setReadingDelay(readingDelay);
@@ -87,7 +96,6 @@ TEST_P(SensorManagementMovedParametersTests, moved)
         .Times(AtLeast(1))
         .WillOnce(Return(hasMovement));
 
-    mockTime.setMethodReturnValue(MockTimeMethod__get_absolute_time, lastTime);
     sensorManagement.heartbeat();
 
     actualResult = sensorManagement.moved();
@@ -115,6 +123,9 @@ protected:
 
 TEST_P(SensorManagementCalculateAverageIntervalParametersTests, calculateAverageInterval)
 {
+    MockPicoSdk mockPicoSdk;
+    mockPicoSdkApi.mockPicoSdk = &mockPicoSdk;
+
     auto [intervals, expectedResult] = GetParam();
 
     bool actualResult;
@@ -122,21 +133,19 @@ TEST_P(SensorManagementCalculateAverageIntervalParametersTests, calculateAverage
 
     MockMovementSensor mockMovementSensor;
 
-    mockTime.reset();
-
-    mockTime.setMethodReturnValue(MockTimeMethod__get_absolute_time, currentTime);
+    EXPECT_CALL(mockPicoSdk, get_absolute_time).WillRepeatedly(Return(currentTime));
+    ON_CALL(mockMovementSensor, hasMovement).WillByDefault(Return(false));
 
     sensorManagement.init(&mockMovementSensor);
-
-    EXPECT_CALL(mockMovementSensor, hasMovement())
-        .Times(AnyNumber())
-        .WillOnce(Return(false));
-
     sensorManagement.setLastMovementTime(10000);
+
     for (auto difference : intervals)
     {
         currentTime += difference;
-        mockTime.setMethodReturnValue(MockTimeMethod__get_absolute_time, currentTime);
+
+        EXPECT_CALL(mockPicoSdk, get_absolute_time).Times(1).WillOnce(Return(currentTime));
+        EXPECT_CALL(mockPicoSdk, absolute_time_diff_us(Eq(10000), Eq(currentTime))).Times(1).WillOnce(Return(currentTime - 10000));
+
         sensorManagement.heartbeat();
         sensorManagement.calculateAverageInterval();
     }

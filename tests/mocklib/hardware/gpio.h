@@ -40,6 +40,6 @@ void gpio_pull_down(uint);
 
 void gpio_set_slew_rate(uint, enum gpio_slew_rate);
 
-void gpio_put(uint gpio, bool value);
+void gpio_put(uint, bool);
 
 #endif

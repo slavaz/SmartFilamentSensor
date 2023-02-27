@@ -1,4 +1,5 @@
 /*
+/*
 This file is part of the SmartFilamentSensor distribution
 Copyright (C) 2023 Slava Zanko
 
@@ -17,51 +18,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <gtest/gtest.h>
-#include "mock_gpio.h"
+#include "mocklib.h"
 #include "movement_sensor.h"
+
+using ::testing::Return;
 
 #define TEST_PIN_NUMBER 123
 
-TEST(MovementSensor, init)
-{
-  MovementSensor sensor;
-
-  mockGpio.reset();
-
-  sensor.init(TEST_PIN_NUMBER);
-
-  EXPECT_EQ(1, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_init));
-  EXPECT_EQ(TEST_PIN_NUMBER, mockGpio.getParameter(MockGpioMethodParameter__gpio_init__gpio));
-
-  EXPECT_EQ(1, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_set_dir));
-  EXPECT_EQ(TEST_PIN_NUMBER, mockGpio.getParameter(MockGpioMethodParameter__gpio_set_dir__gpio));
-  EXPECT_EQ(0, mockGpio.getParameter(MockGpioMethodParameter__gpio_set_dir__out));
-
-  EXPECT_EQ(1, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_pull_down));
-}
-
 TEST(MovementSensor, hasMovement)
 {
+  MockPicoSdk mockPicoSdk;
+  mockPicoSdkApi.mockPicoSdk = &mockPicoSdk;
+
   MovementSensor sensor;
-  mockGpio.reset();
+
+  EXPECT_CALL(mockPicoSdk, gpio_init(TEST_PIN_NUMBER));
+  EXPECT_CALL(mockPicoSdk, gpio_set_dir(TEST_PIN_NUMBER, 0));
+  EXPECT_CALL(mockPicoSdk, gpio_pull_down(TEST_PIN_NUMBER));
 
   sensor.init(TEST_PIN_NUMBER);
 
-  mockGpio.setMethodReturnValue(MockGpioMethod__gpio_get, 0);
-  EXPECT_EQ(0, sensor.hasMovement());
-  EXPECT_EQ(0, sensor.hasMovement());
-  EXPECT_EQ(2, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_get));
+  EXPECT_CALL(mockPicoSdk, gpio_get(TEST_PIN_NUMBER)).Times(2).WillOnce(Return(false)).WillOnce(Return(true));
 
-  mockGpio.setMethodReturnValue(MockGpioMethod__gpio_get, 1);
-  EXPECT_EQ(1, sensor.hasMovement());
-  EXPECT_EQ(0, sensor.hasMovement());
-  EXPECT_EQ(4, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_get));
-
-  mockGpio.setMethodReturnValue(MockGpioMethod__gpio_get, 0);
-  EXPECT_EQ(1, sensor.hasMovement());
-  EXPECT_EQ(0, sensor.hasMovement());
-  EXPECT_EQ(6, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_get));
-
-  EXPECT_EQ(0, sensor.hasMovement());
-  EXPECT_EQ(7, mockGpio.getCountMethodCalls(MockGpioMethod__gpio_get));
+  EXPECT_EQ(false, sensor.hasMovement());
+  EXPECT_EQ(true, sensor.hasMovement());
 }

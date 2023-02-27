@@ -16,34 +16,40 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <gtest/gtest.h>
-#include "mock_time.h"
+#include "mocklib/mocklib.h"
+
 #include "timer.h"
+
+using ::testing::AtLeast;
+using ::testing::Eq;
+using ::testing::Return;
 
 #define TEST_TIME_WAIT 1000
 
 TEST(Timer, init)
 {
+    MockPicoSdk mockPicoSdk;
+    mockPicoSdkApi.mockPicoSdk = &mockPicoSdk;
+
     Timer timer;
 
-    mockTime.reset();
+    EXPECT_CALL(mockPicoSdk, get_absolute_time)
+        .Times(1);
 
     timer.init(TEST_TIME_WAIT);
-
-    EXPECT_EQ(1, mockTime.getCountMethodCalls(MockTimeMethod__get_absolute_time));
 }
 
 TEST(Timer, heartbeat)
 {
+    MockPicoSdk mockPicoSdk;
+    mockPicoSdkApi.mockPicoSdk = &mockPicoSdk;
+
     Timer timer;
 
-    mockTime.reset();
+    EXPECT_CALL(mockPicoSdk, get_absolute_time).Times(2);
 
     timer.init(TEST_TIME_WAIT);
-
     timer.heartbeat();
-
-    EXPECT_EQ(2, mockTime.getCountMethodCalls(MockTimeMethod__get_absolute_time));
 }
 
 class TimerHasEndedParametersTests : public ::testing::TestWithParam<std::tuple<int, int, bool>>
@@ -54,21 +60,20 @@ protected:
 
 TEST_P(TimerHasEndedParametersTests, ChecksHasEnded)
 {
+    MockPicoSdk mockPicoSdk;
+    mockPicoSdkApi.mockPicoSdk = &mockPicoSdk;
+
     auto [from, to, expectedResult] = GetParam();
     bool actualResult;
 
-    mockTime.reset();
+    EXPECT_CALL(mockPicoSdk, get_absolute_time).Times(AtLeast(2)).WillOnce(Return(from)).WillOnce(Return(to));
+    EXPECT_CALL(mockPicoSdk, absolute_time_diff_us(Eq(from), Eq(to))).Times(1).WillOnce(Return(to - from));
 
-    mockTime.setMethodReturnValue(MockTimeMethod__get_absolute_time, from);
     timer.init(TEST_TIME_WAIT);
 
-    mockTime.setMethodReturnValue(MockTimeMethod__get_absolute_time, to);
     timer.heartbeat();
-    actualResult = timer.hasEnded();
 
-    EXPECT_EQ(1, mockTime.getCountMethodCalls(MockTimeMethod__absolute_time_diff_us));
-    EXPECT_EQ(from, mockTime.getParameter(MockTimeMethodParameter__absolute_time_diff_us__from));
-    EXPECT_EQ(to, mockTime.getParameter(MockTimeMethodParameter__absolute_time_diff_us__to));
+    actualResult = timer.hasEnded();
 
     EXPECT_EQ(expectedResult, actualResult);
 }

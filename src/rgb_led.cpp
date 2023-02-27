@@ -102,8 +102,9 @@ void RgbLed::lowlevel_setClockdiv(pio_sm_config *const config)
 
 void RgbLed::lowlevel_init(const PIO pio, const uint pin)
 {
-    uint offset = pio_add_program(pio, &rgbLedProgram);
     pio_sm_config config;
+
+    uint offset = pio_add_program(pio, &rgbLedProgram);
 
     pio_gpio_init(pio, pin);
     pio_sm_set_consecutive_pindirs(pio, RGB_LED__PIO_SM, pin, 1, true);

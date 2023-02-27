@@ -70,7 +70,7 @@ void sm_config_set_out_shift(pio_sm_config *c, bool shift_right, bool autopull, 
 
 void sm_config_set_fifo_join(pio_sm_config *c, enum pio_fifo_join join);
 
-void pio_sm_init(PIO pio, uint sm, uint initial_pc, const pio_sm_config *config);
+void pio_sm_init(PIO pio, uint sm, uint initial_pc, pio_sm_config *config);
 
 void pio_sm_set_enabled(PIO pio, uint sm, bool enabled);
 
