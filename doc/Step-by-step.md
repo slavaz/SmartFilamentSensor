@@ -70,6 +70,6 @@ Connect RP2040Zero to your PC via USB cable. Press 'RESET' button on the plate, 
 
 Final steps
 ---
-On the final step, need to put Engine wheel on a motor shaft and put 'engine sensor body' with a sensor to body of extruder using few drop of superglue. It should liiks like:
+On the final step, need to put Engine wheel on a motor shaft and put 'engine sensor body' with a sensor to body of extruder using few drop of superglue. It should looks like:
 
 ![Assembly Engine Part](img/115.AssemblyEnginePart.png)
